@@ -1,0 +1,14 @@
+$drop - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]
+Example Usage: $drop TOKEN_NAME AMOUNT_OF_TOKENS NUM_DROPS
+
+$add_item - adds new item to shop.[ADMIN ONLY]
+Example Usage: $add_item SHOP_NAME ITEM_NAME COST TOKEN_NAME, after doing so react to the message you sent with the correct emoji for that item.
+
+$remove_item - removes item from shop.[ADMIN ONLY]
+Example Usage: $remove_item SHOP_NAME ITEM_NAME
+
+$create_token - creates new token.[ADMIN ONLY]
+Example Usage: $create_token TOKEN_NAME
+
+$createshop - posts new shop and invalidates previous shop.[ADMIN ONLY]
+Example Usage: $createshop SHOP_NAME

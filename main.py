@@ -4,6 +4,7 @@ import sqlite3
 from database import *
 import json
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 admin_list = [177742789222727681, 124016824202297344]
@@ -44,7 +45,7 @@ async def on_message(message):
     try:
         if unique_id != client.user.id:
             if message.content.lower().startswith("$help"):
-                output_text = "Help Menu\n\n"
+                output_text = "**Help Menu**\n\n"
                 output_text += "**$withdraw** - withdraw tokens to eth address.\nExample Usage: " + \
                     example_withdraw+"\n\n"
                 output_text += "**$balance** - list balances for yourself\nExample Usage: " + \
@@ -53,14 +54,16 @@ async def on_message(message):
                     example_balance+"\n\n"
                 output_text += "**$send** - sends tokens to other users\nExample Usage: " + \
                     example_send+"\n\n"
-                output_text += "**$drop** - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]\nExample Usage: " + example_drop+"\n\n"
-                output_text += "**$add_item** - adds new item to shop.[ADMIN ONLY]\nExample Usage: " + \
-                    example_add_item+"\n\n"
-                output_text += "**$remove_item** - removes item from shop.[ADMIN ONLY]\nExample Usage: " + \
-                    example_remove_item+"\n\n"
-                output_text += "**$create_token** - creates new token.[ADMIN ONLY]\nExample Usage: " + \
-                    example_create+"\n\n"
-                output_text += "**$createshop** - posts new shop and invalidates previous shop.[ADMIN ONLY]\nExample Usage: " + example_shop+"\n\n"
+                
+                #output_text += "**$drop** - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]\nExample Usage: " + example_drop+"\n\n"
+                #output_text += "**$add_item** - adds new item to shop.[ADMIN ONLY]\nExample Usage: " + \
+                    #example_add_item+"\n\n"
+                #output_text += "**$remove_item** - removes item from shop.[ADMIN ONLY]\nExample Usage: " + \
+                    #example_remove_item+"\n\n"
+                #output_text += "**$create_token** - creates new token.[ADMIN ONLY]\nExample Usage: " + \
+                    #example_create+"\n\n"
+                #output_text += "**$createshop** - posts new shop and invalidates previous shop.[ADMIN ONLY]\nExample Usage: " + example_shop+"\n\n"
+                
                 await channel.send(output_text)
 
             elif message.content.lower().startswith("$withdraw"):
@@ -95,6 +98,8 @@ async def on_message(message):
 
             elif message.content.lower().startswith("$balance"):
                 params = message.content.split(" ")
+                print("Running $balance user")
+
                 if len(message.mentions) != 1:
                     await channel.send("Error, parameters missing or extra parameters found, the balance command should look like this.\n" + example_balance)
                 else:
@@ -154,6 +159,7 @@ async def on_message(message):
                             num_drops -= 1
                             set_balance(user.id, token_name, get_balance(
                                 user.id, token_name)+amount_tokens)
+                            await channel.send(str(user) + " has obtained " + str(amount_tokens) + " tokens!")    
                             print(num_drops)
 
             elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
