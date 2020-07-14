@@ -6,8 +6,10 @@ import json
 from dotenv import load_dotenv
 import os
 
+
+
 load_dotenv()
-admin_list = [177742789222727681, 124016824202297344]
+admin_list = [124016824202297344]
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
@@ -17,13 +19,13 @@ example_add_item = "$add_item SHOP_NAME ITEM_NAME COST TOKEN_NAME, after doing s
 example_remove_item = "$remove_item SHOP_NAME ITEM_NAME"
 example_create = "$create_token TOKEN_NAME"
 example_shop = "$createshop SHOP_NAME"
-DROP_EMOJI = "🩸"
+DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
 
-
-
 client = discord.Client()
+
+
 
 try:
     shop = json.loads(open("shop.json", "r").read())
@@ -54,6 +56,7 @@ async def on_message(message):
                     example_balance+"\n\n"
                 output_text += "**$send** - sends tokens to other users\nExample Usage: " + \
                     example_send+"\n\n"
+                output_text += "For additional help, join discord.gg/matrix \n\n"     
                 
                 #output_text += "**$drop** - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]\nExample Usage: " + example_drop+"\n\n"
                 #output_text += "**$add_item** - adds new item to shop.[ADMIN ONLY]\nExample Usage: " + \
@@ -67,6 +70,7 @@ async def on_message(message):
                 await channel.send(output_text)
 
             elif message.content.lower().startswith("$withdraw"):
+              
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send("Error, parameters missing or extra parameters found, the withdraw command should look like this.\n" + example_withdraw)
@@ -79,26 +83,27 @@ async def on_message(message):
                         await channel.send("Token not found.")
                     elif current_balance < token_count:
                         await channel.send("Not enough tokens to make the withdrawal.")
+                    elif token_count < 0:
+                        await channel.send("You cannot withdraw less than 0 tokens.")
                     else:
+                        HQ_channel = client.get_channel(732435051224236043)
                         current_balance -= token_count
                         set_balance(unique_id, token_name, current_balance)
                         await channel.send("Request being processed.")
                         admin_user = client.get_user(ADMIN_ID)
-                        await admin_user.send("<@"+str(unique_id) + "> has withdrawn " + str(token_count) + " " + token_name + " tokens to " + str(eth_address))
-                        # this can be changed to send to a channel
+                        await HQ_channel.send("<@"+str(unique_id) + "> has withdrawn " + str(token_count) + " " + token_name + " tokens to " + str(eth_address))
 
             elif message.content.lower() == "$balance":
                 user_balance = get_balances(unique_id)
-                balance_text = author+"'s balance\n"
+                balance_text = "**<@"+str(message.author.id) + ">" +"'s balance:**\n\n"
                 for token_name in user_balance:
                     if (int(user_balance[token_name]) != 0):
-                        balance_text += (token_name+": " +
+                        balance_text += ("**"+token_name+"**: " +
                                          str(user_balance[token_name])+"\n")
                 await channel.send(balance_text)
 
             elif message.content.lower().startswith("$balance"):
                 params = message.content.split(" ")
-                print("Running $balance user")
 
                 if len(message.mentions) != 1:
                     await channel.send("Error, parameters missing or extra parameters found, the balance command should look like this.\n" + example_balance)
@@ -107,10 +112,10 @@ async def on_message(message):
                         message.mentions[0].name+message.mentions[0].discriminator)
                     other_id = message.mentions[0].id
                     user_balance = get_balances(other_id)
-                    balance_text = other_user+"'s balance\n"
+                    balance_text = "**<@"+str(other_id) + ">"+"'s balance:**\n\n"
                     for token_name in user_balance:
                         if (int(user_balance[token_name]) != 0):
-                            balance_text += (token_name+": " +
+                            balance_text += ("**"+token_name+"**: " +
                                              str(user_balance[token_name])+"\n")
                     await channel.send(balance_text)
 
@@ -127,6 +132,8 @@ async def on_message(message):
                     current_balance = get_balance(unique_id, token_name)
                     if current_balance < token_count:
                         await channel.send("Not enough tokens.")
+                    elif token_count < 0:
+                        await channel.send("You cannot send less than zero tokens.")
                     else:
                         set_balance(unique_id, token_name,
                                     current_balance-token_count)
@@ -159,7 +166,7 @@ async def on_message(message):
                             num_drops -= 1
                             set_balance(user.id, token_name, get_balance(
                                 user.id, token_name)+amount_tokens)
-                            await channel.send(str(user) + " has obtained " + str(amount_tokens) + " tokens!")    
+                            await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(num_drops) + "remaining!")    
                             print(num_drops)
 
             elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
@@ -226,11 +233,11 @@ async def on_message(message):
                     else:
                         item_list = shop[shop_name]['items']
                         sorted(item_list, key=lambda k: k['item_name'])
-                        message_content = str(shop_name).capitalize(
-                        ) + " Shop\nReact to purchase an item\n\n"
+                        message_content = "**"+str(shop_name).capitalize(
+                        ) + " Shop**" + "\n" + "*"+"React to purchase an item*" +"\n\n"
                         for item in item_list:
-                            message_content += ("Name: " + item['item_name'] + ", Price: " + str(
-                                item['cost']) + ", Token Type: " + item['token_name']+", Icon: " + item['icon'] + "\n")
+                            message_content += ("**Name**: " + item['item_name'] + ", **Price**: " + str(
+                                item['cost']) + ", **Token Type**: " + item['token_name']+", **Icon**: " + item['icon'] + "\n")
                         new_message = await channel.send(message_content)
                         previous_id = shop[shop_name]['message_id']
                         if previous_id !="None" and previous_id in shop['message_list']:
@@ -240,6 +247,8 @@ async def on_message(message):
                             await old_msg.delete()
                         shop[shop_name]['message_id'] = new_message.id
                         shop['message_list'].append(new_message.id)
+                        json.dump(shop, open("shop.json", "w+")) 
+
 
     except Exception as e:
         print("Possible error or incorrect parameter order")
@@ -248,15 +257,18 @@ async def on_message(message):
 
 
 @client.event
-async def on_reaction_add(reaction, user):
-    if (reaction.message.id in shop["message_list"]):
-        reaction_message_id=reaction.message.id
+async def on_raw_reaction_add(payload):
+    HQ_channel = client.get_channel(732435051224236043)
+    channel=client.get_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+    reaction_message_id=message.id
+    if (reaction_message_id in shop["message_list"]):
+        user = await client.fetch_user(payload.user_id)
         unique_id = user.id
-        channel = reaction.message.channel
-        emoji = str(reaction)
+        emoji = str(payload.emoji)
         shop_name=None
         for s in shop:
-            if shop[s]['message_id'] == reaction_message_id:
+            if s != "message_list" and shop[s]['message_id'] == reaction_message_id:
                 shop_name=s
                 break
         if shop_name is not None:
@@ -266,12 +278,11 @@ async def on_reaction_add(reaction, user):
                     if user_balance < int(item['cost']):
                         await channel.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
-                        await channel.send("<@"+str(user.id) + ">, purchase is being processed.")
+                        await channel.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
                         set_balance(
                             unique_id, item['token_name'], user_balance-int(item['cost']))
                         admin_user = client.get_user(ADMIN_ID)
-                        await admin_user.send("<@"+str(user.id) + "> has purchased " + item['item_name'])
-                        # this can be changed to send to a channel
+                        await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
                     break
 
 if __name__ == '__main__':
