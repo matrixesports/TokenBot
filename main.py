@@ -9,7 +9,14 @@ import os
 
 
 load_dotenv()
-admin_list = [124016824202297344]
+admin_list = [124016824202297344], 485386050512879617,  
+480679155609108501, 
+667098393251938364, 
+450768015496183830, 
+431989145842483200, 
+351957872646684672,  
+557388612971397130, 
+639132617907896340]
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
