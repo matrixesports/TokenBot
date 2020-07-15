@@ -166,7 +166,7 @@ async def on_message(message):
                             num_drops -= 1
                             set_balance(user.id, token_name, get_balance(
                                 user.id, token_name)+amount_tokens)
-                            await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(num_drops) + "remaining!")    
+                            await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(num_drops) + " remaining!")    
                             print(num_drops)
 
             elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
