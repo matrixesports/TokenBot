@@ -198,7 +198,7 @@ async def on_message(message):
 
             elif message.content.lower().startswith("$remove_item") and unique_id in admin_list:
                 params = message.content.split(" ")
-                if len(params) != 2: #originally 3
+                if len(params) != 3: 
                     await channel.send("Error, parameters missing or extra parameters found, the remove item command should look like this.\n" + example_remove_item)
                 else:
                     shop_name = params[1].lower()
