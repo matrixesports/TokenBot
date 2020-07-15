@@ -48,7 +48,7 @@ async def on_message(message):
         if unique_id != client.user.id:
             if message.content.lower().startswith("$help"):
                 output_text = "**Help Menu**\n\n"
-                output_text += "**$withdraw** - withdraw tokens to eth address.\nExample Usage: " + \
+                output_text += "**$withdraw** - withdraw tokens to eth address\nExample Usage: " + \
                     example_withdraw+"\n\n"
                 output_text += "**$balance** - list balances for yourself\nExample Usage: " + \
                     example_balance_self+"\n\n"
