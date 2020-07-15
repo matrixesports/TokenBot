@@ -158,6 +158,8 @@ async def on_message(message):
                     num_drops = int(params[3])
                     if amount_tokens < 0 or num_drops < 0:
                         await channel.send("Parameters cannot be less then 0.")
+                    if amount_tokens > 1000:
+                        await channel.send("You can't drop more than 1000 tokens!")    
                     else:
 
                         user_list = []
