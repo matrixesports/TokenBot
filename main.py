@@ -215,7 +215,7 @@ async def on_message(message):
                     if shop_name not in shop:
                         await channel.send("Shop not found.")
                     else:
-                        for item_num in range(len(shop['items'])):
+                        for item_num in range(len(shop[shop_name]['items'])):
                             if shop[shop_name]['items'][item_num]['item_name'].lower() == item_name.lower():
                                 shop[shop_name]['items'].pop(item_num)
                         json.dump(shop, open("shop.json", "w+"))
