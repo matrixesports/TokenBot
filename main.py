@@ -285,9 +285,9 @@ async def on_raw_reaction_add(payload):
                 if item['icon'] == emoji:
                     user_balance = get_balance(unique_id, item['token_name'])
                     if user_balance < int(item['cost']):
-                        await channel.send("<@"+str(user.id) + ">, you cannot afford that item.")
+                        await user.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
-                        await channel.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
+                        await user.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
                         set_balance(
                             unique_id, item['token_name'], user_balance-int(item['cost']))
                         admin_user = client.get_user(ADMIN_ID)
