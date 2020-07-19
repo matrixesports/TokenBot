@@ -262,10 +262,14 @@ async def on_message(message):
 
                 params = message.content.split(" ")
                 question = params[1]
-                if len(params) != 2:
+                token_type = params[2]
+                aye = 0
+                nay = 0
+
+                if len(params) != 3:
                   await channel.send("Error, parameters missing or extra parameters found.")
                 else:
-                  poll = await channel.send("**"+question+"**")  
+                  poll = await channel.send("**"+question+"**"+"\n"+"👍: "+str(aye)+"\n"+"👎:"+str(nay))  
                   await poll.add_reaction("👍")
                   await poll.add_reaction("👎")
                   
