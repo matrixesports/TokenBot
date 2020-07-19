@@ -257,6 +257,20 @@ async def on_message(message):
                         shop[shop_name]['message_id'] = new_message.id
                         shop['message_list'].append(new_message.id)
                         json.dump(shop, open("shop.json", "w+")) 
+                    
+            elif message.content.lower().startswith("$create_vote") and unique_id in admin_list:
+
+                params = message.content.split(" ")
+                question = params[1]
+                if len(params) != 2:
+                  await channel.send("Error, parameters missing or extra parameters found.")
+                else:
+                  poll = await channel.send("**"+question+"**")  
+                  await poll.add_reaction(👍)
+                  await poll.add_reaction(👎)
+                  
+
+                  
 
 
     except Exception as e:
