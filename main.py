@@ -266,8 +266,8 @@ async def on_message(message):
                   await channel.send("Error, parameters missing or extra parameters found.")
                 else:
                   poll = await channel.send("**"+question+"**")  
-                  await poll.add_reaction(👍)
-                  await poll.add_reaction(👎)
+                  await poll.add_reaction("👍")
+                  await poll.add_reaction("👎")
                   
 
                   
