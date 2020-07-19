@@ -259,19 +259,66 @@ async def on_message(message):
                         json.dump(shop, open("shop.json", "w+")) 
                     
             elif message.content.lower().startswith("$create_vote") and unique_id in admin_list:
-
-                params = message.content.split(" ")
-                question = params[1]
-                token_type = params[2]
-                aye = 0
-                nay = 0
-
-                if len(params) != 3:
-                  await channel.send("Error, parameters missing or extra parameters found.")
+                params = message.content.split('-')
+                if len(params) != 4:
+                    await channel.send("Error, parameters missing or extra parameters found, the create_poll command should look like this.\n" + example_poll_create)
                 else:
-                  poll = await channel.send("**"+question+"**"+"\n"+"👍: "+str(aye)+"\n"+"👎:"+str(nay))  
-                  await poll.add_reaction("👍")
-                  await poll.add_reaction("👎")
+                    question = params[1]
+                    token_name = params[2].lower()
+                    minutes_till_end = int(params[3])
+                    affirmative = 0
+                    negative = 0
+                    poll = await channel.send("**Poll: "+question+"**"+"\n"+"👍: "+str(affirmative)+"\n\n"+"👎:"+str(negative))
+                    await poll.add_reaction("👍")
+                    await poll.add_reaction("👎")
+                    start_time = time.time()
+                    end_time = start_time+(minutes_till_end*60)
+                    temp_user_list = []
+                    while time.time() < end_time:
+                        def check(reaction, user):
+                            return user != poll.author and reaction.message.id == poll.id and user.id not in temp_user_list
+                        try:
+                            reaction, user = await client.wait_for('reaction_add', timeout=end_time-time.time(), check=check)
+                            temp_user_list.append(user.id)
+                            balance = get_balance(user.id, token_name)
+                            if (str(reaction) == "👍"):
+                                affirmative += balance
+                            elif (str(reaction) == "👎"):
+                                negative += balance
+                            await poll.edit(content="**Poll: "+question+"**"+"\n"+"👍: "+str(affirmative)+"\n\n"+"👎:"+str(negative))
+                        except asyncio.TimeoutError:
+                            pass
+                    
+                    if affirmative>negative:
+                        await poll.edit(content="**Poll: "+question+"**"+"\nWinner is 👍 with " + str(affirmative) + " tokens")
+                    elif negative>affirmative:
+                        await poll.edit(content="**Poll: "+question+"**"+"\nWinner is  👎 with " + str(negative) + " tokens")
+                    else:
+                        await poll.edit(content="**Poll: "+question+"**"+"\nIt's a tie with " + str(affirmative) + " tokens")
+            
+            elif message.content.lower().startswith("$create_code") and unique_id in admin_list:
+                params = message.content.split(" ")
+                if len(params) != 5:
+                    await channel.send("Error, parameters missing or extra parameters found, the create_code command should look like this.\n" + example_code_create)
+                else:
+                    code=params[1]
+                    token_amount=int(params[2])
+                    token_name=params[3].lower()
+                    max_use=int(params[4])
+                    codes[code]={"remaining":max_use,"user_list":[],"token_name":token_name,"token_count":token_amount}
+                    await channel.send("Code created.")
+            
+            elif message.content.lower().startswith("$remove_code") and unique_id in admin_list:
+                params = message.content.split(" ")
+                if len(params) != 2:
+                    await channel.send("Error, parameters missing or extra parameters found, the create_code command should look like this.\n" + example_code_remove)
+                else:
+                    code=params[1]
+                    if code in codes:
+                        del(codes[code])
+                        await channel.send("Code removed.")
+                    else:
+                        await channel.send("Code not found.")
                   
 
                   
