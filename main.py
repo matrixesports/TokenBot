@@ -9,23 +9,20 @@ import os
 
 
 load_dotenv()
-admin_list = [124016824202297344, 485386050512879617,  
-480679155609108501, 
-667098393251938364, 
-450768015496183830, 
-431989145842483200, 
-351957872646684672,  
-557388612971397130, 
-639132617907896340]
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
 example_send = "$send AMOUNT_OF_TOKENS TOKEN_NAME @USER"
 example_drop = "$drop TOKEN_NAME AMOUNT_OF_TOKENS NUM_DROPS"
-example_add_item = "$add_item SHOP_NAME ITEM_NAME COST TOKEN_NAME, after doing so react to the message you sent with the correct emoji for that item."
+example_add_item = "$add_item SHOP_NAME ITEM_NAME QUANTITY_AVAILABLE COST TOKEN_NAME, after doing so react to the message you sent with the correct emoji for that item."
 example_remove_item = "$remove_item SHOP_NAME ITEM_NAME"
 example_create = "$create_token TOKEN_NAME"
 example_shop = "$createshop SHOP_NAME"
+example_poll_create = "$create_vote QUESTION TOKEN_NAME MINUTES_TILL_END"
+example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
+example_code_remove = "$remove_code CODE"
+example_add_admin="$add_admin USER_ID"
+example_remove_admin="$remove_admin USER_ID"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
@@ -178,15 +175,17 @@ async def on_message(message):
                             await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(num_drops) + " remaining!")    
                             print(num_drops)
 
-            elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
+              elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
                 params = message.content.split(" ")
-                if len(params) != 5:
+                if len(params) != 6:
                     await channel.send("Error, parameters missing or extra parameters found, the add item command should look like this.\n" + example_add_item)
                 else:
                     shop_name = params[1].lower()
                     item_name = params[2].lower()
-                    cost = int(params[3])
-                    token_name = params[4].lower()
+                    quantity= int(params[3])
+                    cost = int(params[4])
+                    token_name = params[5].lower()
+                    
 
                     def check(reaction, user):
                         return user == message.author and reaction.message == message
@@ -199,7 +198,7 @@ async def on_message(message):
                                 shop[shop_name] = {
                                     "items": [], "message_id": None}
                             shop[shop_name]['items'].append(
-                                {"item_name": item_name, "cost": cost, "token_name": token_name, "icon": str(reaction)})
+                                {"item_name": item_name, "cost": cost, "stock":quantity, "token_name": token_name, "icon": str(reaction)})
                             json.dump(shop, open("shop.json", "w+"))
                             await channel.send("Item added, please re-run the $createshop command to refresh")
                     except asyncio.TimeoutError:
@@ -319,6 +318,34 @@ async def on_message(message):
                         await channel.send("Code removed.")
                     else:
                         await channel.send("Code not found.")
+            
+            elif message.content.lower().startswith("$add_admin") and unique_id in admin_list:
+                params = message.content.split(" ")
+                if len(params) != 2:
+                    await channel.send("Error, parameters missing or extra parameters found, the add_admin command should look like this.\n" + example_add_admin)
+                else:
+                    admin_id=int(params[1])
+                    if admin_id in admin_list:
+                        await channel.send("Admin already in system.")
+                    else:
+                        admin_list.append(int(admin_id))
+                        admins['admins']=admin_list
+                        await channel.send("Admin added.")
+                        json.dump(admins, open("admins.json","w+"))
+            
+            elif message.content.lower().startswith("$remove_admin") and unique_id in admin_list:
+                params = message.content.split(" ")
+                if len(params) != 2:
+                    await channel.send("Error, parameters missing or extra parameters found, the remove_admin command should look like this.\n" + example_remove_admin)
+                else:
+                    admin_id=int(params[1])
+                    if admin_id in admin_list:
+                        admin_list.pop(admin_list.index(admin_id))
+                        await channel.send("Admin removed.")
+                        admins['admins']=admin_list
+                        json.dump(admins, open("admins.json","w+"))
+                    else:
+                        await channel.send("Admin not found in system.")
                   
 
                   
