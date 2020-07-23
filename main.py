@@ -24,7 +24,6 @@ example_code_remove = "$remove_code CODE"
 example_add_admin="$add_admin USER_ID"
 example_remove_admin="$remove_admin USER_ID"
 DROP_EMOJI = "💰"
-admin_
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
 
