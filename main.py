@@ -175,7 +175,7 @@ async def on_message(message):
                             await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(num_drops) + " remaining!")    
                             print(num_drops)
 
-              elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
+            elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 6:
                     await channel.send("Error, parameters missing or extra parameters found, the add item command should look like this.\n" + example_add_item)
