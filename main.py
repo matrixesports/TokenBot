@@ -5,7 +5,7 @@ from database import *
 import json
 from dotenv import load_dotenv
 import os
-
+import time
 
 
 load_dotenv()
@@ -28,6 +28,7 @@ ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
 
 client = discord.Client()
+codes={} #redeemables 
 
 
 
@@ -44,11 +45,11 @@ except:
     admins={"admins":[]}
     admin_list=[]
     json.dump(admins, open("admins.json", "w+"))
+codes={}
 
 @client.event
 async def on_ready():
     print('logged in as: ', client.user.name, ' - ', client.user.id)
-
 
 @client.event
 async def on_message(message):
@@ -328,10 +329,11 @@ async def on_message(message):
             
             elif message.content.lower().startswith("$add_admin") and unique_id in admin_list:
                 params = message.content.split(" ")
-                if len(params) != 2:
+                mentions=message.mentions
+                if len(mentions) != 1:
                     await channel.send("Error, parameters missing or extra parameters found, the add_admin command should look like this.\n" + example_add_admin)
                 else:
-                    admin_id=int(params[1])
+                    admin_id=mentions[0].id
                     if admin_id in admin_list:
                         await channel.send("Admin already in system.")
                     else:
