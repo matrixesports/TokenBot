@@ -51,6 +51,17 @@ codes={}
 async def on_ready():
     print('logged in as: ', client.user.name, ' - ', client.user.id)
 
+def get_shop_contents(shop_name):
+    item_list = shop[shop_name]['items']
+    sorted(item_list, key=lambda k: k['item_name'])
+    message_content = "**"+str(shop_name).capitalize(
+    ) + " Shop**" + "\n" + "*"+"React to purchase an item*" +"\n\n"
+    for item in item_list:
+        message_content += ("**Name**: " + item['item_name'] + ", **Price**: " + str(
+            item['cost']) + ", **Token Type**: " + item['token_name']+", **Stock**: " + str(item['stock']) + ", **Icon**: " + item['icon'] + "\n")
+    return message_content
+
+  
 @client.event
 async def on_message(message):
     channel = message.channel
@@ -388,12 +399,19 @@ async def on_raw_reaction_add(payload):
                     if user_balance < int(item['cost']):
                         await user.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
+                        item['stock']-=1
+                        if (item['stock']==0):
+                            shop[shop_name]['items'].pop(shop[shop_name]['items'].index(item))
+                        json.dump(shop,open("shop.json","w+"))
                         await user.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
                         set_balance(
                             unique_id, item['token_name'], user_balance-int(item['cost']))
                         admin_user = client.get_user(ADMIN_ID)
+                        shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
+                        await shop_message.edit(content=get_shop_contents(shop_name))
                         await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
                     break
+
 
 if __name__ == '__main__':
     client.run(APIKEY)
