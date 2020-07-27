@@ -85,6 +85,7 @@ async def on_message(message):
                 await channel.send(output_text)
             
             elif message.content.lower().startswith("$adminhelp"): 
+                adminoutput_text = "**Admin Help Menu**\n\n"
                 adminoutput_text += "**$drop** - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]\nExample Usage: " + example_drop+"\n\n"
                 adminoutput_text += "**$add_item** - adds new item to shop.[ADMIN ONLY]\nExample Usage: " + \
                     example_add_item+"\n\n"
