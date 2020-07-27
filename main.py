@@ -81,17 +81,25 @@ async def on_message(message):
                     example_send+"\n\n"
                 output_text += "For additional help, join discord.gg/matrix \n\n"     
                 
-                #output_text += "**$drop** - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]\nExample Usage: " + example_drop+"\n\n"
-                #output_text += "**$add_item** - adds new item to shop.[ADMIN ONLY]\nExample Usage: " + \
-                    #example_add_item+"\n\n"
-                #output_text += "**$remove_item** - removes item from shop.[ADMIN ONLY]\nExample Usage: " + \
-                    #example_remove_item+"\n\n"
-                #output_text += "**$create_token** - creates new token.[ADMIN ONLY]\nExample Usage: " + \
-                    #example_create+"\n\n"
-                #output_text += "**$createshop** - posts new shop and invalidates previous shop.[ADMIN ONLY]\nExample Usage: " + example_shop+"\n\n"
                 
                 await channel.send(output_text)
+            
+            elif message.content.lower().startswith("$adminhelp"): 
+                adminoutput_text += "**$drop** - creates token drops, users who react with the correct emoji will receive tokens.[ADMIN ONLY]\nExample Usage: " + example_drop+"\n\n"
+                adminoutput_text += "**$add_item** - adds new item to shop.[ADMIN ONLY]\nExample Usage: " + \
+                    example_add_item+"\n\n"
+                adminoutput_text += "**$remove_item** - removes item from shop.[ADMIN ONLY]\nExample Usage: " + \
+                    example_remove_item+"\n\n"
+                adminoutput_text += "**$create_token** - creates new token.[ADMIN ONLY]\nExample Usage: " + \
+                    example_create+"\n\n"
+                adminoutput_text += "**$createshop** - posts new shop and invalidates previous shop.[ADMIN ONLY]\nExample Usage: " + example_shop+"\n\n"
+                adminoutput_text += "**$create_code** - Makes code. [ADMIN ONLY]\nExample Usage: " + \
+                  example_code_create+"\n\n"
+                adminoutput_text += "**$quietdrop** - No channel message drop. [ADMIN ONLY]"
 
+                
+                await channel.send(adminoutput_text)
+                
             elif message.content.lower().startswith("$withdraw"):
               
                 params = message.content.split(" ")
@@ -192,6 +200,36 @@ async def on_message(message):
                             set_balance(user.id, token_name, get_balance(
                                 user.id, token_name)+amount_tokens)
                             await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(num_drops) + " remaining!")    
+                            print(num_drops)
+            
+            elif message.content.lower().startswith("$quietdrop") and unique_id in admin_list:
+                params = message.content.split(" ")
+                if len(params) != 4:
+                    await channel.send("Error, parameters missing or extra parameters found, the drop command should look like this.\n" + example_drop)
+                else:
+                    token_name = params[1]
+                    amount_tokens = int(params[2])
+                    num_drops = int(params[3])
+                    if amount_tokens < 0 or num_drops < 0:
+                        await channel.send("Parameters cannot be less then 0.")
+                    if amount_tokens > 1000:
+                        await channel.send("You can't drop more than 1000 tokens!")    
+                    else:
+
+                        user_list = []
+                        m = await channel.send("The first " + str(num_drops) + " people to react with the below reaction, will receive " + str(amount_tokens) + " " + str(token_name) + " tokens")
+
+                        def check(reaction, user):
+                            return user != m.author and str(reaction.emoji) == DROP_EMOJI and reaction.message.id == m.id and user.id not in user_list
+                        token_list = get_token_list()
+                        await m.add_reaction(DROP_EMOJI)
+                        while num_drops > 0:
+                            reaction, user = await client.wait_for('reaction_add', check=check)
+                            user_list.append(user.id)
+                            num_drops -= 1
+                            set_balance(user.id, token_name, get_balance(
+                                user.id, token_name)+amount_tokens)
+                            await user.send("You have obtained " + str(amount_tokens) + " tokens!")    
                             print(num_drops)
 
             elif message.content.lower().startswith("$add_item") and unique_id in admin_list:
