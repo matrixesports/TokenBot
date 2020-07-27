@@ -68,6 +68,22 @@ async def on_message(message):
     author = str(message.author)
     unique_id = message.author.id
     try:
+          if unique_id != client.user.id:
+            if message.guild is None:
+                code=message.content
+                if code in codes and unique_id:
+                    if unique_id not in codes[code]['user_list']:
+                        if codes[code]['remaining']>=1:
+                            codes[code]['user_list'].append(unique_id)
+                            codes[code]['remaining']-=1
+                            token_name=codes[code]['token_name']
+                            set_balance(unique_id, token_name, get_balance(unique_id, token_name)+codes[code]['token_count'])
+                            await channel.send("Code redeemed succesfully!")
+                        else:
+                            await channel.send("This code is no longer available.")
+                    else:
+                        await channel.send("You have already redeemed this code.")
+        
         if unique_id != client.user.id:
             if message.content.lower().startswith("$help"):
                 output_text = "**Help Menu**\n\n"
