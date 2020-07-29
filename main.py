@@ -558,7 +558,7 @@ async def on_raw_reaction_add(payload):
             set_balance(user.id, token_name, get_balance(
             user.id, token_name)+amount_tokens)
             drops[reaction_message_id]['remaining']-=1
-            await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(drops[reaction_message_id]['remaining']) + " remaining!")   
+            await user.send("You have obtained " + str(amount_tokens) + " tokens!")
             if drops[reaction_message_id]['remaining']==0:
                 del(drops[reaction_message_id]) 
 
