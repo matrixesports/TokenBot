@@ -225,35 +225,21 @@ async def on_message(message):
                         await channel.send(
                             "You can't drop more than 1000 tokens!")
                     else:
-
                         user_list = []
                         m = await channel.send(
                             "The first " + str(num_drops) +
                             " people to react with the below reaction, will receive "
                             + str(amount_tokens) + " " + str(token_name) +
                             " tokens")
-
-                        def check(reaction, user):
-                            return user != m.author and str(
-                                reaction.emoji
-                            ) == DROP_EMOJI and reaction.message.id == m.id and user.id not in user_list
-
                         token_list = get_token_list()
+                        if m.id not in drops:
+                            drops[m.id] = {
+                                "token_name": token_name.lower(),
+                                "num_tokens": amount_tokens,
+                                "remaining": num_drops,
+                                "user_list": [client.user.id]
+                            }
                         await m.add_reaction(DROP_EMOJI)
-                        while num_drops > 0:
-                            reaction, user = await client.wait_for(
-                                'reaction_add', check=check)
-                            user_list.append(user.id)
-                            num_drops -= 1
-                            set_balance(
-                                user.id, token_name,
-                                get_balance(user.id, token_name) +
-                                amount_tokens)
-                            await channel.send(
-                                "<@" + str(user.id) + "> " + "has obtained " +
-                                str(amount_tokens) + " tokens! There are " +
-                                str(num_drops) + " remaining!")
-                            print(num_drops)
 
             elif message.content.lower().startswith(
                     "$quietdrop") and unique_id in admin_list:
