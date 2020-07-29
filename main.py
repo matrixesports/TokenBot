@@ -545,47 +545,52 @@ async def on_message(message):
 @client.event
 async def on_raw_reaction_add(payload):
     HQ_channel = client.get_channel(732435051224236043)
-    channel = client.get_channel(payload.channel_id)
+    channel=client.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
-    reaction_message_id = message.id
-    if (reaction_message_id in shop["message_list"]):
+    reaction_message_id=message.id
+    if (reaction_message_id in drops):
+        user = await client.fetch_user(payload.user_id)
+        emoji = str(payload.emoji)
+        if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
+            drops[reaction_message_id]['user_list'].append(user.id)
+            token_name=drops[reaction_message_id]['token_name']
+            amount_tokens=drops[reaction_message_id]['num_tokens']
+            set_balance(user.id, token_name, get_balance(
+            user.id, token_name)+amount_tokens)
+            drops[reaction_message_id]['remaining']-=1
+            await channel.send("<@"+str(user.id) + "> " +  "has obtained " + str(amount_tokens) + " tokens! There are " + str(drops[reaction_message_id]['remaining']) + " remaining!")   
+            if drops[reaction_message_id]['remaining']==0:
+                del(drops[reaction_message_id]) 
+
+    elif (reaction_message_id in shop["message_list"]):
         user = await client.fetch_user(payload.user_id)
         unique_id = user.id
         emoji = str(payload.emoji)
-        shop_name = None
+        shop_name=None
         for s in shop:
-            if s != "message_list" and shop[s][
-                    'message_id'] == reaction_message_id:
-                shop_name = s
+            if s != "message_list" and shop[s]['message_id'] == reaction_message_id:
+                shop_name=s
                 break
         if shop_name is not None:
             for item in shop[shop_name]['items']:
                 if item['icon'] == emoji:
                     user_balance = get_balance(unique_id, item['token_name'])
                     if user_balance < int(item['cost']):
-                        await user.send("<@" + str(user.id) +
-                                        ">, you cannot afford that item.")
+                        await user.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
-                        item['stock'] -= 1
-                        if (item['stock'] == 0):
-                            shop[shop_name]['items'].pop(
-                                shop[shop_name]['items'].index(item))
-                        json.dump(shop, open("shop.json", "w+"))
-                        await user.send(
-                            "<@" + str(user.id) +
-                            ">, purchase is being processed. Your purchase has been sent to the admins."
-                        )
-                        set_balance(unique_id, item['token_name'],
-                                    user_balance - int(item['cost']))
+                        item['stock']-=1
+                        if (item['stock']==0):
+                            shop[shop_name]['items'].pop(shop[shop_name]['items'].index(item))
+                        json.dump(shop,open("shop.json","w+"))
+                        await user.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
+                        set_balance(
+                            unique_id, item['token_name'], user_balance-int(item['cost']))
                         admin_user = client.get_user(ADMIN_ID)
-                        shop_message = await channel.fetch_message(
-                            shop[shop_name]['message_id'])
-                        await shop_message.edit(
-                            content=get_shop_contents(shop_name))
-                        await HQ_channel.send(
-                            "<@" + str(user.id) + "> has purchased " +
-                            item['item_name'] + " from " + shop_name)
+                        shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
+                        await shop_message.edit(content=get_shop_contents(shop_name))
+                        await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
                     break
+
 
 
 if __name__ == '__main__':
