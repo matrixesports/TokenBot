@@ -28,6 +28,7 @@ APIKEY = os.getenv('API_KEY')
 
 client = discord.Client()
 codes = {}  #redeemables
+drops = {}
 
 try:
     shop = json.loads(open("shop.json", "r").read())
