@@ -22,7 +22,7 @@ example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
 example_code_remove = "$remove_code CODE"
 example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
-DROP_EMOJI = "💰"
+DROP_EMOJI = "name:739562185876832317"
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
 
@@ -240,7 +240,7 @@ async def on_message(message):
                                 "remaining": num_drops,
                                 "user_list": [client.user.id]
                             }
-                        await m.add_reaction("name:739562185876832317")
+                        await m.add_reaction(DROP_EMOJI)
 
             elif message.content.lower().startswith(
                     "$quietdrop") and unique_id in admin_list:
@@ -270,10 +270,10 @@ async def on_message(message):
                         def check(reaction, user):
                             return user != m.author and str(
                                 reaction.emoji
-                            ) == "name:739562185876832317" and reaction.message.id == m.id and user.id not in user_list
+                            ) == DROP_EMOJI and reaction.message.id == m.id and user.id not in user_list
 
                         token_list = get_token_list()
-                        await m.add_reaction("name:739562185876832317")
+                        await m.add_reaction(DROP_EMOJI)
                         while num_drops > 0:
                             reaction, user = await client.wait_for(
                                 'reaction_add', check=check)
@@ -551,7 +551,7 @@ async def on_raw_reaction_add(payload):
     if (reaction_message_id in drops):
         user = await client.fetch_user(payload.user_id)
         emoji = str(payload.emoji)
-        if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji=="name:739562185876832317":
+        if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
             drops[reaction_message_id]['user_list'].append(user.id)
             token_name=drops[reaction_message_id]['token_name']
             amount_tokens=drops[reaction_message_id]['num_tokens']
