@@ -240,7 +240,7 @@ async def on_message(message):
                                 "remaining": num_drops,
                                 "user_list": [client.user.id]
                             }
-                        await m.add_reaction(DROP_EMOJI)
+                        await m.add_reaction(739562185876832317)
 
             elif message.content.lower().startswith(
                     "$quietdrop") and unique_id in admin_list:
