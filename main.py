@@ -270,10 +270,10 @@ async def on_message(message):
                         def check(reaction, user):
                             return user != m.author and str(
                                 reaction.emoji
-                            ) == DROP_EMOJI and reaction.message.id == m.id and user.id not in user_list
+                            ) == "name:739562185876832317" and reaction.message.id == m.id and user.id not in user_list
 
                         token_list = get_token_list()
-                        await m.add_reaction(DROP_EMOJI)
+                        await m.add_reaction("name:739562185876832317")
                         while num_drops > 0:
                             reaction, user = await client.wait_for(
                                 'reaction_add', check=check)
@@ -551,7 +551,7 @@ async def on_raw_reaction_add(payload):
     if (reaction_message_id in drops):
         user = await client.fetch_user(payload.user_id)
         emoji = str(payload.emoji)
-        if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
+        if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji=="name:739562185876832317":
             drops[reaction_message_id]['user_list'].append(user.id)
             token_name=drops[reaction_message_id]['token_name']
             amount_tokens=drops[reaction_message_id]['num_tokens']
