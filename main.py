@@ -22,7 +22,7 @@ example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
 example_code_remove = "$remove_code CODE"
 example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
-DROP_EMOJI = "name:739562185876832317"
+DROP_EMOJI = 💰
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
 
