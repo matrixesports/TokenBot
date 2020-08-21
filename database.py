@@ -1,6 +1,6 @@
 import sqlite3
 
-connection = sqlite3.connect("discord-commerce.db")
+connection = sqlite3.connect("/data/discord-commerce.db")
 cursor = connection.cursor()
 create_table = """CREATE TABLE IF NOT EXISTS balances (
 	username INTEGER PRIMARY KEY
