@@ -6,6 +6,7 @@ import json
 from dotenv import load_dotenv
 import os
 import time
+from track_action import *
 
 load_dotenv()
 example_withdraw = "$withdraw eth_address token_name token_count"
@@ -146,6 +147,15 @@ async def on_message(message):
                         HQ_channel = client.get_channel(732435051224236043)
                         current_balance -= token_count
                         set_balance(unique_id, token_name, current_balance)
+                        #
+                        #
+                        #
+                        #
+                        track_action(unique_id)
+                        #
+                        #
+                        #
+                        #
                         await channel.send("Request being processed.")
                         admin_user = client.get_user(ADMIN_ID)
                         await HQ_channel.send(
@@ -207,6 +217,15 @@ async def on_message(message):
                         set_balance(
                             other_id, token_name,
                             get_balance(other_id, token_name) + token_count)
+                        #
+                        #
+                        #
+                        #
+                        track_action(unique_id)
+                        #
+                        #
+                        #
+                        #
                         await channel.send("Tokens sent succesfully.")
 
             elif message.content.lower().startswith(
@@ -240,6 +259,15 @@ async def on_message(message):
                                 "remaining": num_drops,
                                 "user_list": [client.user.id]
                             }
+                        #
+                        #
+                        #
+                        #
+                        track_action(unique_id)
+                        #
+                        #
+                        #
+                        #
                         await m.add_reaction(DROP_EMOJI)
 
             elif message.content.lower().startswith(
@@ -272,6 +300,15 @@ async def on_message(message):
                                 reaction.emoji
                             ) == DROP_EMOJI and reaction.message.id == m.id and user.id not in user_list
 
+                        #
+                        #
+                        #
+                        #
+                        track_action(unique_id)
+                        #
+                        #
+                        #
+                        #
                         token_list = get_token_list()
                         await m.add_reaction(DROP_EMOJI)
                         while num_drops > 0:
@@ -329,6 +366,15 @@ async def on_message(message):
                                 str(reaction)
                             })
                             json.dump(shop, open("shop.json", "w+"))
+                            #
+                            #
+                            #
+                            #
+                            track_action(unique_id)
+                            #
+                            #
+                            #
+                            #
                             await channel.send(
                                 "Item added, please re-run the $createshop command to refresh"
                             )
@@ -355,6 +401,15 @@ async def on_message(message):
                                     'item_name'].lower() == item_name.lower():
                                 shop[shop_name]['items'].pop(item_num)
                         json.dump(shop, open("shop.json", "w+"))
+                        #
+                        #
+                        #
+                        #
+                        track_action(unique_id)
+                        #
+                        #
+                        #
+                        #
                         await channel.send(
                             "Item removed, please re-run the $createshop command to refresh"
                         )
@@ -560,7 +615,7 @@ async def on_raw_reaction_add(payload):
             drops[reaction_message_id]['remaining']-=1
             await user.send("You have obtained " + str(amount_tokens) + " tokens!")
             if drops[reaction_message_id]['remaining']==0:
-                del(drops[reaction_message_id]) 
+                del(drops[reaction_message_id])
 
     elif (reaction_message_id in shop["message_list"]):
         user = await client.fetch_user(payload.user_id)
