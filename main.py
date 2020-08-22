@@ -232,6 +232,7 @@ async def on_message(message):
                         #
                         #
                         #
+                        set_profile(unique_id, token_name, client)
                         track_send(unique_id)
                         #
                         #
