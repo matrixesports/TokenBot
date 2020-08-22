@@ -1,5 +1,6 @@
 from mixpanel import Mixpanel
 import discord
+from database import *
 
 mp = Mixpanel('6e8340ea62ff79b774da5fdbdcad0b2d')
 
