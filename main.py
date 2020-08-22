@@ -84,6 +84,16 @@ async def on_message(message):
                                 unique_id, token_name,
                                 get_balance(unique_id, token_name) +
                                 codes[code]['token_count'])
+                            #
+                            #
+                            #
+                            #
+                            set_profile(unique_id, token_name, client)
+                            track_code(unique_id)
+                            #
+                            #
+                            #
+                            #
                             await channel.send("Code redeemed succesfully!")
                         else:
                             await channel.send(
@@ -151,7 +161,8 @@ async def on_message(message):
                         #
                         #
                         #
-                        track_action(unique_id)
+                        set_profile(unique_id, token_name, client)
+                        track_withdraw(unique_id)
                         #
                         #
                         #
@@ -221,7 +232,8 @@ async def on_message(message):
                         #
                         #
                         #
-                        track_action(unique_id)
+                        set_profile(unique_id, token_name, client)
+                        track_send(unique_id)
                         #
                         #
                         #
@@ -263,7 +275,8 @@ async def on_message(message):
                         #
                         #
                         #
-                        track_action(unique_id)
+                        set_profile(unique_id, token_name, client)
+                        track_drop(unique_id)
                         #
                         #
                         #
@@ -300,15 +313,6 @@ async def on_message(message):
                                 reaction.emoji
                             ) == DROP_EMOJI and reaction.message.id == m.id and user.id not in user_list
 
-                        #
-                        #
-                        #
-                        #
-                        track_action(unique_id)
-                        #
-                        #
-                        #
-                        #
                         token_list = get_token_list()
                         await m.add_reaction(DROP_EMOJI)
                         while num_drops > 0:
@@ -366,15 +370,6 @@ async def on_message(message):
                                 str(reaction)
                             })
                             json.dump(shop, open("shop.json", "w+"))
-                            #
-                            #
-                            #
-                            #
-                            track_action(unique_id)
-                            #
-                            #
-                            #
-                            #
                             await channel.send(
                                 "Item added, please re-run the $createshop command to refresh"
                             )
@@ -401,15 +396,6 @@ async def on_message(message):
                                     'item_name'].lower() == item_name.lower():
                                 shop[shop_name]['items'].pop(item_num)
                         json.dump(shop, open("shop.json", "w+"))
-                        #
-                        #
-                        #
-                        #
-                        track_action(unique_id)
-                        #
-                        #
-                        #
-                        #
                         await channel.send(
                             "Item removed, please re-run the $createshop command to refresh"
                         )
