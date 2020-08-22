@@ -228,16 +228,7 @@ async def on_message(message):
                         set_balance(
                             other_id, token_name,
                             get_balance(other_id, token_name) + token_count)
-                        #
-                        #
-                        #
-                        #
-                        set_profile(unique_id, token_name, client)
-                        track_send(unique_id)
-                        #
-                        #
-                        #
-                        #
+
                         await channel.send("Tokens sent succesfully.")
 
             elif message.content.lower().startswith(
