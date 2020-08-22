@@ -88,7 +88,6 @@ async def on_message(message):
                             #
                             #
                             #
-                            set_profile(unique_id, token_name, client)
                             track_code(unique_id)
                             #
                             #
@@ -161,7 +160,6 @@ async def on_message(message):
                         #
                         #
                         #
-                        set_profile(unique_id, token_name, client)
                         track_withdraw(unique_id)
                         #
                         #
@@ -232,7 +230,6 @@ async def on_message(message):
                         #
                         #
                         #
-                        set_profile(unique_id, token_name, client)
                         track_send(unique_id)
                         #
                         #
@@ -275,7 +272,6 @@ async def on_message(message):
                         #
                         #
                         #
-                        set_profile(unique_id, token_name, client)
                         track_drop(unique_id)
                         #
                         #
