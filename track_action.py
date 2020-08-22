@@ -1,14 +1,14 @@
 from mixpanel import Mixpanel
-import discord
 from database import *
+import discord
 
 mp = Mixpanel('6e8340ea62ff79b774da5fdbdcad0b2d')
 
 #Tracks an event, 'makes Transaction'
-def set_profile(unique_id, token_name, client):
+def set_profile(unique_id, token_name, server_name):
     mp.people_set(unique_id, {
         'balance' : get_balance(unique_id, token_name),
-        'server' : client.get_guild(discord.Guild.id)
+        'server' : server_name
     })
 
 def track_code(unique_id):
