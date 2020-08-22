@@ -94,4 +94,4 @@ yarl==1.4.2 \
 mixpanel==4.6.0 \
     --hash=sha256:b010f445d700d555d66e49f48bb72f29a7c4a2181e3e4eb07b19ba53c648d983
 six==1.15.0 \
-    --hash=sha256=8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
+    --hash=sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced
