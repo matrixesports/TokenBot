@@ -25,8 +25,7 @@ example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
-#APIKEY = os.getenv('API_KEY')
-APIKEY = 'NzMxNzIzNTY0OTIyODMwODg4.XwqNDQ.MQLOInfVj9cfLYEuZ9bZKh6ildg'
+APIKEY = os.getenv('API_KEY')
 
 client = discord.Client()
 codes = {}  #redeemables
