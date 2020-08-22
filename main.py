@@ -88,7 +88,7 @@ async def on_message(message):
                             #
                             #
                             #
-                            set_profile(unique_id, token_name, ctx.message.guild.name)
+                            set_profile(unique_id, token_name, message.guild.name)
                             track_code(unique_id)
                             #
                             #
@@ -161,7 +161,7 @@ async def on_message(message):
                         #
                         #
                         #
-                        set_profile(unique_id, token_name, ctx.message.guild.name)
+                        set_profile(unique_id, token_name, message.guild.name)
                         track_withdraw(unique_id)
                         #
                         #
@@ -232,7 +232,7 @@ async def on_message(message):
                         #
                         #
                         #
-                        set_profile(unique_id, token_name, ctx.message.guild.name)
+                        set_profile(unique_id, token_name, message.guild.name)
                         track_send(unique_id)
                         #
                         #
@@ -275,7 +275,7 @@ async def on_message(message):
                         #
                         #
                         #
-                        set_profile(unique_id, token_name, ctx.message.guild.name)
+                        set_profile(unique_id, token_name, message.guild.name)
                         track_drop(unique_id)
                         #
                         #
