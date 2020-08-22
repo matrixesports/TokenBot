@@ -17,7 +17,7 @@ example_drop = "$drop TOKEN_NAME AMOUNT_OF_TOKENS NUM_DROPS"
 example_add_item = "$add_item SHOP_NAME ITEM_NAME QUANTITY_AVAILABLE COST TOKEN_NAME, after doing so react to the message you sent with the correct emoji for that item."
 example_remove_item = "$remove_item SHOP_NAME ITEM_NAME"
 example_create = "$create_token TOKEN_NAME"
-example_shop = "$createshop SHOP_NAME"s
+example_shop = "$createshop SHOP_NAME"
 example_poll_create = "$create_vote QUESTION TOKEN_NAME MINUTES_TILL_END"
 example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
 example_code_remove = "$remove_code CODE"
@@ -26,9 +26,8 @@ example_remove_admin = "$remove_admin USER_ID"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
-PYTHONUNBUFFERED = os.gentenv('PYTHONUNBUFFERED')
 
-client = discord.Client()s
+client = discord.Client()
 codes = {}  #redeemables
 drops = {}
 
