@@ -187,7 +187,7 @@ async def on_message(message):
                         #
                         #
                         set_profile(unique_id, token_name, message.guild.name)
-                        track_send(unique_id)
+                        track_balance(unique_id)
                         #
                         #
                         #
@@ -217,7 +217,7 @@ async def on_message(message):
                         #
                         #
                         set_profile(unique_id, token_name, message.guild.name)
-                        track_send(unique_id)
+                        track_balance(unique_id)
                         #
                         #
                         #
@@ -291,16 +291,7 @@ async def on_message(message):
                                 "remaining": num_drops,
                                 "user_list": [client.user.id]
                             }
-                        #
-                        #
-                        #
-                        #
-                        set_profile(unique_id, token_name, message.guild.name)
-                        track_drop(unique_id)
-                        #
-                        #
-                        #
-                        #
+                        
                         await m.add_reaction(DROP_EMOJI)
 
             elif message.content.lower().startswith(
@@ -619,6 +610,15 @@ async def on_raw_reaction_add(payload):
             set_balance(user.id, token_name, get_balance(
             user.id, token_name)+amount_tokens)
             drops[reaction_message_id]['remaining']-=1
+                        #
+                        #
+                        #
+                        set_profile(unique_id, token_name, message.guild.name)
+                        track_drop(unique_id)
+                        #
+                        #
+                        #
+                        #
             await user.send("You have obtained " + str(amount_tokens) + " tokens!")
             if drops[reaction_message_id]['remaining']==0:
                 del(drops[reaction_message_id])

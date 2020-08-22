@@ -22,3 +22,6 @@ def track_send(unique_id):
 
 def track_drop(unique_id):
     mp.track(unique_id, 'drop')
+
+def track_balance(unique_id):
+    mp.track(unique_id, 'balance')
