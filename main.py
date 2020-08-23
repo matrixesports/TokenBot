@@ -652,7 +652,7 @@ async def on_raw_reaction_add(payload):
                         admin_user = client.get_user(ADMIN_ID)
                         shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
                         await shop_message.edit(content=get_shop_contents(shop_name))
-                        await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name + "in" + reaction.guild.name)
+                        await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
                     break
 
 
