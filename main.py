@@ -380,7 +380,7 @@ async def on_message(message):
                                 "icon":
                                 str(reaction)
                             })
-                            json.dump(shop, open("shop.json", "w+"))
+                            json.dump(shop, open("/data/shop.json", "w+"))
                             await channel.send(
                                 "Item added, please re-run the $createshop command to refresh"
                             )
@@ -406,7 +406,7 @@ async def on_message(message):
                             if shop[shop_name]['items'][item_num][
                                     'item_name'].lower() == item_name.lower():
                                 shop[shop_name]['items'].pop(item_num)
-                        json.dump(shop, open("shop.json", "w+"))
+                        json.dump(shop, open("/data/shop.json", "w+"))
                         await channel.send(
                             "Item removed, please re-run the $createshop command to refresh"
                         )
@@ -456,7 +456,7 @@ async def on_message(message):
                             await old_msg.delete()
                         shop[shop_name]['message_id'] = new_message.id
                         shop['message_list'].append(new_message.id)
-                        json.dump(shop, open("shop.json", "w+"))
+                        json.dump(shop, open("/data/shop.json", "w+"))
 
             elif message.content.lower().startswith(
                     "$create_vote") and unique_id in admin_list:
@@ -567,7 +567,7 @@ async def on_message(message):
                         admin_list.append(int(admin_id))
                         admins['admins'] = admin_list
                         await channel.send("Admin added.")
-                        json.dump(admins, open("admins.json", "w+"))
+                        json.dump(admins, open("/data/admins.json", "w+"))
 
             elif message.content.lower().startswith(
                     "$remove_admin") and unique_id in admin_list:
@@ -582,7 +582,7 @@ async def on_message(message):
                         admin_list.pop(admin_list.index(admin_id))
                         await channel.send("Admin removed.")
                         admins['admins'] = admin_list
-                        json.dump(admins, open("admins.json", "w+"))
+                        json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
 
@@ -644,7 +644,7 @@ async def on_raw_reaction_add(payload):
                         item['stock']-=1
                         if (item['stock']==0):
                             shop[shop_name]['items'].pop(shop[shop_name]['items'].index(item))
-                        json.dump(shop,open("shop.json","w+"))
+                        json.dump(shop,open("/data/shop.json","w+"))
                         await user.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
                         set_balance(
                             unique_id, item['token_name'], user_balance-int(item['cost']))
