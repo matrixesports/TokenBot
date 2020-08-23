@@ -64,7 +64,7 @@ def get_shop_contents(shop_name):
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
 
-
+#code redemption
 @client.event
 async def on_message(message):
     channel = message.channel
