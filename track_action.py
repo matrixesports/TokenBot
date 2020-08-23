@@ -25,3 +25,6 @@ def track_drop(unique_id):
 
 def track_balance(unique_id):
     mp.track(unique_id, 'balance')
+
+def track_buy(unique_id):
+    mp.track(unique_id, 'buy')

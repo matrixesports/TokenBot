@@ -651,6 +651,8 @@ async def on_raw_reaction_add(payload):
                         shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
                         await shop_message.edit(content=get_shop_contents(shop_name))
                         await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
+                        set_profile(unique_id, token_name, message.guild.name)
+                        track_buy(unique_id)
                     break
 
 
