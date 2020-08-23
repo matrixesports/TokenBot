@@ -32,17 +32,17 @@ codes = {}  #redeemables
 drops = {}
 
 try:
-    shop = json.loads(open("shop.json", "r").read())
+    shop = json.loads(open("/data/shop.json", "r").read())
 except:
     shop = {"message_list": []}
-    json.dump(shop, open("shop.json", "w+"))
+    json.dump(shop, open("/data/shop.json", "w+"))
 try:
-    admins = json.loads(open("admins.json", "r").read())
+    admins = json.loads(open("/data/admins.json", "r").read())
     admin_list = admins['admins']
 except:
     admins = {"admins": []}
     admin_list = []
-    json.dump(admins, open("admins.json", "w+"))
+    json.dump(admins, open("/data/admins.json", "w+"))
 codes = {}
 
 
