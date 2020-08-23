@@ -596,13 +596,13 @@ async def on_message(message):
 
 @client.event
 async def on_raw_reaction_add(payload):
+    user = await client.fetch_user(payload.user_id)
     HQ_channel = client.get_channel(732435051224236043)
     channel = client.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     unique_id = user.id
     reaction_message_id=message.id
     if (reaction_message_id in drops):
-        user = await client.fetch_user(payload.user_id)
         emoji = str(payload.emoji)
         if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
             drops[reaction_message_id]['user_list'].append(user.id)
