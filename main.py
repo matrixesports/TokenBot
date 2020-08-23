@@ -640,6 +640,8 @@ async def on_raw_reaction_add(payload):
                     if user_balance < int(item['cost']):
                         await user.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
+                        set_profile(unique_id, token_name, message.guild.name)
+                        track_buy(unique_id)
                         item['stock']-=1
                         if (item['stock']==0):
                             shop[shop_name]['items'].pop(shop[shop_name]['items'].index(item))
@@ -651,8 +653,6 @@ async def on_raw_reaction_add(payload):
                         shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
                         await shop_message.edit(content=get_shop_contents(shop_name))
                         await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
-                        set_profile(unique_id, token_name, message.guild.name)
-                        track_buy(unique_id)
                     break
 
 
