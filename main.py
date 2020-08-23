@@ -212,16 +212,16 @@ async def on_message(message):
                         if (int(user_balance[token_name]) != 0):
                             balance_text += ("**" + token_name + "**: " + str(
                                 user_balance[token_name]) + "\n")
-                        #
-                        #
-                        #
-                        #
-                        set_profile(unique_id, token_name, message.guild.name)
-                        track_balance(unique_id)
-                        #
-                        #
-                        #
-                        #
+                    #
+                    #
+                    #
+                    #
+                    set_profile(unique_id, token_name, message.guild.name)
+                    track_balance(unique_id)
+                    #
+                    #
+                    #
+                    # 
                     await channel.send(balance_text)
 
             elif message.content.lower().startswith("$send"):
