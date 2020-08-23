@@ -629,6 +629,7 @@ async def on_raw_reaction_add(payload):
         unique_id = user.id
         emoji = str(payload.emoji)
         shop_name=None
+        track_buy(unique_id)
         for s in shop:
             if s != "message_list" and shop[s]['message_id'] == reaction_message_id:
                 shop_name=s
@@ -640,7 +641,6 @@ async def on_raw_reaction_add(payload):
                     if user_balance < int(item['cost']):
                         await user.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
-                        track_buy(unique_id)
                         item['stock']-=1
                         if (item['stock']==0):
                             shop[shop_name]['items'].pop(shop[shop_name]['items'].index(item))
