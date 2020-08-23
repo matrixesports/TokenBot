@@ -640,7 +640,6 @@ async def on_raw_reaction_add(payload):
                     if user_balance < int(item['cost']):
                         await user.send("<@"+str(user.id) + ">, you cannot afford that item.")
                     else:
-                        set_profile(unique_id, token_name, message.guild.name)
                         track_buy(unique_id)
                         item['stock']-=1
                         if (item['stock']==0):
