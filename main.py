@@ -595,6 +595,7 @@ async def on_message(message):
 
 
 @client.event
+#Drop handling
 async def on_raw_reaction_add(payload):
     HQ_channel = client.get_channel(732435051224236043)
     channel = client.get_channel(payload.channel_id)
