@@ -43,7 +43,7 @@ except:
     admins = {"admins": []}
     admin_list = []
     json.dump(admins, open("/data/admins.json", "w+"))
-codes = {}
+
 
 #connect
 @client.event
@@ -88,6 +88,7 @@ async def on_message(message):
                             #
                             #
                             #
+                            message.guild.name = "code"
                             set_profile(unique_id, token_name, message.guild.name)
                             track_code(unique_id)
                             #
