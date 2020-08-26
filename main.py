@@ -88,8 +88,7 @@ async def on_message(message):
                             #
                             #
                             #
-                            message.guild.name = "code"
-                            set_profile(unique_id, token_name, message.guild.name)
+                            set_profile(unique_id, token_name, "code")
                             track_code(unique_id)
                             #
                             #
