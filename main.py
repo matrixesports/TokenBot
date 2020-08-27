@@ -89,7 +89,7 @@ async def on_message(message):
                             #
                             #
                             set_profile(unique_id, token_name, "code")
-                            track_code(unique_id)
+                            track_code(unique_id, token_name, code)
                             #
                             #
                             #

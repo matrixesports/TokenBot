@@ -11,8 +11,9 @@ def set_profile(unique_id, token_name, server_name):
         'server' : server_name
     })
 
-def track_code(unique_id):
+def track_code(unique_id, token_name, code):
     mp.track(unique_id, 'code')
+    
 
 def track_withdraw(unique_id):
     mp.track(unique_id, 'withdraw')
