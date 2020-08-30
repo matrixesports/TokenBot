@@ -242,6 +242,10 @@ async def on_message(message):
                     elif token_count < 0:
                         await channel.send(
                             "You cannot send less than zero tokens.")
+                    elif token_count > 50:
+                        await channel.send(
+                            "You cannot send more than fifty tokens."
+                        )
                     else:
                         set_balance(unique_id, token_name,
                                     current_balance - token_count)
@@ -656,6 +660,6 @@ async def on_raw_reaction_add(payload):
                     break
 
 
-
+            
 if __name__ == '__main__':
     client.run(APIKEY)
