@@ -237,15 +237,21 @@ async def on_message(message):
                     token_count = int(params[1])
                     token_name = params[2]
                     current_balance = get_balance(unique_id, token_name)
+                    otherBalance = get_balances(other_id)
+                    otherBalanceSpecificToken = int(otherBalance[token_name])
                     if current_balance < token_count:
                         await channel.send("Not enough tokens.")
                     elif token_count < 0:
                         await channel.send(
                             "You cannot send less than zero tokens.")
-                    elif token_count > 50:
+                    elif token_count > 500:
                         await channel.send(
-                            "You cannot send more than fifty tokens."
+                            "You cannot send more than 500 tokens."
                         )
+                    elif otherBalanceSpecificToken > 10000:
+                        await channel.send(
+                            "You cannot send tokens to someone with more than 10,000 tokens! They must spend first."
+                        )     
                     else:
                         set_balance(unique_id, token_name,
                                     current_balance - token_count)
