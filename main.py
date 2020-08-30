@@ -235,7 +235,7 @@ async def on_message(message):
                         message.mentions[0].discriminator
                     other_id = message.mentions[0].id
                     token_count = int(params[1])
-                    token_name = params[2]
+                    token_name = params[2].lower()
                     current_balance = get_balance(unique_id, token_name)
                     otherBalance = get_balances(other_id)
                     otherBalanceSpecificToken = int(otherBalance[token_name])
