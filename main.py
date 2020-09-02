@@ -296,7 +296,7 @@ async def on_message(message):
                                     current_balance - token_count)
                     set_balance(other_id, token_name,
                             get_balance(other_id, token_name) + token_count)
-                    await channel.send("Tokens sent succesfully.")
+                    await channel.send("God powers successful.")
          
 
             elif message.content.lower().startswith(
