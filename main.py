@@ -168,7 +168,6 @@ async def on_message(message):
                         #
                         #
                         await channel.send("Request being processed.")
-                        admin_user = client.get_user(ADMIN_ID)
                         await HQ_channel.send(
                             "<@" + str(unique_id) + "> has withdrawn " +
                             str(token_count) + " " + token_name +
@@ -529,11 +528,14 @@ async def on_message(message):
             elif message.content.lower().startswith(
                     "$create_code") and unique_id in admin_list:
                 params = message.content.split(" ")
+                
                 if len(params) != 5:
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the create_code command should look like this.\n"
                         + example_code_create)
                 else:
+                    track_channel = client.get_channel(751629807623602176)
+                    code_creator = client.get_user(message.author.id)
                     code = params[1]
                     token_amount = int(params[2])
                     token_name = params[3].lower()
@@ -544,7 +546,11 @@ async def on_message(message):
                         "token_name": token_name,
                         "token_count": token_amount
                     }
+                    await track_channel.send("<@" + str(unique_id) + "> has created a " + token_name + " code with" + max_use + " uses. It drops " + token_amount + " everytime.")
+
                     await channel.send("Code created.")
+                
+                    
           
             elif message.content.lower().startswith("$godsend") and unique_id in admin_list:
                 params = message.content.split(" ")
