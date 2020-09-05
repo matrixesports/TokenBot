@@ -534,6 +534,7 @@ async def on_message(message):
                         "Error, parameters missing or extra parameters found, the create_code command should look like this.\n"
                         + example_code_create)
                 else:
+                    author = str(message.author)
                     track_channel = client.get_channel(751629807623602176)
                     code_creator = client.get_user(message.author.id)
                     code = params[1]
@@ -546,7 +547,7 @@ async def on_message(message):
                         "token_name": token_name,
                         "token_count": token_amount
                     }
-                    await track_channel.send("<@" + str(user.id) + "> has created a " + token_name + " code with" + max_use + " uses. It drops " + token_amount + " everytime.")
+                    await track_channel.send("<@" + str(author) + "> has created a " + token_name + " code with" + max_use + " uses. It drops " + token_amount + " everytime.")
 
                     await channel.send("Code created.")
                 
