@@ -293,6 +293,8 @@ async def on_message(message):
                             + str(amount_tokens) + " " + str(token_name) +
                             " tokens")
                         token_list = get_token_list()
+                        track_channel = client.get_channel(751629807623602176)
+                        author = str(message.author)
                         if m.id not in drops:
                             drops[m.id] = {
                                 "token_name": token_name.lower(),
@@ -302,7 +304,8 @@ async def on_message(message):
                             }
                         
                         await m.add_reaction(DROP_EMOJI)
-
+                        await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " everytime.")
+            
             elif message.content.lower().startswith(
                     "$quietdrop") and unique_id in admin_list:
                 params = message.content.split(" ")
