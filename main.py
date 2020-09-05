@@ -547,7 +547,7 @@ async def on_message(message):
                         "token_name": token_name,
                         "token_count": token_amount
                     }
-                    await track_channel.send("<@" + str(author) + "> has created a " + token_name + " code with" + max_use + " uses. It drops " + token_amount + " everytime.")
+                    await track_channel.send("<@" + author + "> has created a " + token_name + " code with" + str(max_use) + " uses. It drops " + str(token_amount) + " everytime.")
 
                     await channel.send("Code created.")
                 
