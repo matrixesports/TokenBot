@@ -39,11 +39,11 @@ except:
     shop = {"message_list": []}
     json.dump(shop, open("/data/shop.json", "w+"))
 try:
-    admins = json.loads(open("/data/admins1.json", "r").read())
-    admin_list = admins['admins1']
+    admins = json.loads(open("/data/admins.json", "r").read())
+    admin_list = admins['admins']
 except:
     admins = {"t1": {"user_list": []}}
-    json.dump(admins, open("/data/admins1.json", "w+"))
+    json.dump(admins, open("/data/admins.json", "w+"))
 
 
 #connect
@@ -635,7 +635,7 @@ async def on_message(message):
                             if (tier != 1):
                                 admins['admin_actions'][str(admin_id)]={"24hour":time.time(),"tokens_used":0,"token_limit":admins["t"+str(tier)]['token_limit']}
                                 await channel.send("Admin added.")
-                        json.dump(admins, open("/data/admins1.json", "w+"))
+                        json.dump(admins, open("/data/admins.json", "w+"))
           
             elif message.content.lower().startswith(
                     "$set_limit") and unique_id in admins['t1']['user_list']:
@@ -669,7 +669,7 @@ async def on_message(message):
                     if admin_id in admins["t"+str(tier)]['user_list']:
                         admins["t"+str(tier)]['user_list'].pop(admins["t"+str(tier)]['user_list'].index(admin_id))
                         await channel.send("Admin removed.")                   
-                        json.dump(admins, open("/data/admins1.json", "w+"))
+                        json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
 
