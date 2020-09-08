@@ -30,7 +30,7 @@ ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
 
 client = discord.Client()
-codes = {}  #redeemables
+codes = {}  #redeemable codes
 drops = {}  #drops are stored in memory
 
 try:
