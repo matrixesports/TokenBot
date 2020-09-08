@@ -23,8 +23,6 @@ example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
 example_code_remove = "$remove_code CODE"
 example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
-example_set_limit = "$set_limit TIER TOKENS"
-
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
 APIKEY = os.getenv('API_KEY')
@@ -42,7 +40,8 @@ try:
     admins = json.loads(open("/data/admins.json", "r").read())
     admin_list = admins['admins']
 except:
-    admins = {"t1": {"user_list": []}}
+    admins = {"admins": []}
+    admin_list = []
     json.dump(admins, open("/data/admins.json", "w+"))
 
 
@@ -65,12 +64,6 @@ def get_shop_contents(shop_name):
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
 
-def is_admin(unique_id):
-    for tier in admins:
-        if (tier != "admin_actions"):
-            if unique_id in admins[tier]['user_list']:
-                return True
-    return False
 #code redemption
 @client.event
 async def on_message(message):
@@ -175,8 +168,6 @@ async def on_message(message):
                         #
                         #
                         await channel.send("Request being processed.")
-                        admin_user = client.get_user(ADMIN_ID)
-
                         await HQ_channel.send(
                             "<@" + str(unique_id) + "> has withdrawn " +
                             str(token_count) + " " + token_name +
@@ -279,7 +270,7 @@ async def on_message(message):
                         await channel.send("Tokens sent succesfully.")
 
             elif message.content.lower().startswith(
-                    "$drop") and is_admin(unique_id):
+                    "$drop") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send(
@@ -296,20 +287,7 @@ async def on_message(message):
                             "You can't drop more than 1000 tokens!")
                     else:
                         user_list = []
-                        flag=True
-                        total_tokens=amount_tokens * num_drops
-                        if unique_id not in admins["t1"]['user_list']:
-                            if time.time() - 86400 > admins['admin_actions'][str(unique_id)]['24hour']:
-                                admins['admin_actions'][str(unique_id)]['24hour']= time.time()
-                                admins['admin_actions'][str(unique_id)]['tokens_used']= 0
-                            if (total_tokens>(admins['admin_actions'][str(unique_id)]['token_limit']-admins['admin_actions'][str(unique_id)]['tokens_used'])):
-                                await channel.send("Not enough tokens remaining in your tier limit.")    
-                                flag=False
-                            else:
-                                admins['admin_actions'][str(unique_id)]['tokens_used']+=total_tokens
-                        json.dump(admins, open("admins.json", "w+"))
-                        if (flag):                        
-                            m = await channel.send(
+                        m = await channel.send(
                             "The first " + str(num_drops) +
                             " people to react with the below reaction, will receive "
                             + str(amount_tokens) + " " + str(token_name) +
@@ -329,7 +307,7 @@ async def on_message(message):
                         await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " every time.")
             
             elif message.content.lower().startswith(
-                    "$quietdrop") and unique_id in admins['t1']['user_list']:
+                    "$quietdrop") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send(
@@ -374,7 +352,7 @@ async def on_message(message):
                             print(num_drops)
 
             elif message.content.lower().startswith(
-                    "$add_item") and unique_id in admins['t1']['user_list']:
+                    "$add_item") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 6:
                     await channel.send(
@@ -424,7 +402,7 @@ async def on_message(message):
                         )
 
             elif message.content.lower().startswith(
-                    "$remove_item") and unique_id in admins['t1']['user_list']:
+                    "$remove_item") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 3:
                     await channel.send(
@@ -446,7 +424,7 @@ async def on_message(message):
                         )
 
             elif message.content.lower().startswith(
-                    "$create_token") and unique_id in admins['t1']['user_list']:
+                    "$create_token") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 2:
                     await channel.send(
@@ -458,7 +436,7 @@ async def on_message(message):
                     await channel.send("Token created succesfully.")
 
             elif message.content.lower().startswith(
-                    "$createshop") and unique_id in admins['t1']['user_list']:
+                    "$createshop") and unique_id in admin_list:
 
                 params = message.content.split(" ")
                 if len(params) != 2:
@@ -493,7 +471,7 @@ async def on_message(message):
                         json.dump(shop, open("/data/shop.json", "w+"))
 
             elif message.content.lower().startswith(
-                    "$create_vote") and unique_id in admins['t1']['user_list']:
+                    "$create_vote") and unique_id in admin_list:
                 params = message.content.split('-')
                 if len(params) != 4:
                     await channel.send(
@@ -551,7 +529,7 @@ async def on_message(message):
                         )
 
             elif message.content.lower().startswith(
-                    "$create_code") and unique_id in admins['t1']['user_list']:
+                    "$create_code") and unique_id in admin_list:
                 params = message.content.split(" ")
                 
                 if len(params) != 5:
@@ -600,7 +578,7 @@ async def on_message(message):
                     await channel.send("God powers successful.")
            
             elif message.content.lower().startswith(
-                    "$remove_code") and unique_id in admins['t1']['user_list']:
+                    "$remove_code") and unique_id in admin_list:
                 params = message.content.split(" ")
                 if len(params) != 2:
                     await channel.send(
@@ -615,60 +593,36 @@ async def on_message(message):
                         await channel.send("Code not found.")
 
             elif message.content.lower().startswith(
-                    "$add_admin") and unique_id in admins['t1']['user_list']:
+                    "$add_admin") and unique_id in admin_list:
                 params = message.content.split(" ")
                 mentions = message.mentions
-                if len(mentions) != 1 and len(params) !=3:
+                if len(mentions) != 1:
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the add_admin command should look like this.\n"
                         + example_add_admin)
                 else:
-                    tier = params[2]
                     admin_id = mentions[0].id
-                    if "t" + str(tier) not in admins:
-                        await channel.send("Tier not found.")
+                    if admin_id in admin_list:
+                        await channel.send("Admin already in system.")
                     else:
-                        if int(admin_id) in admins['t'+str(tier)]:
-                            await channel.send("Admin already added.")
-                        else:
-                            admins['t'+str(tier)]['user_list'].append(int(admin_id))
-                            if (tier != 1):
-                                admins['admin_actions'][str(admin_id)]={"24hour":time.time(),"tokens_used":0,"token_limit":admins["t"+str(tier)]['token_limit']}
-                                await channel.send("Admin added.")
+                        admin_list.append(int(admin_id))
+                        admins['admins'] = admin_list
+                        await channel.send("Admin added.")
                         json.dump(admins, open("/data/admins.json", "w+"))
-          
+
             elif message.content.lower().startswith(
-                    "$set_limit") and unique_id in admins['t1']['user_list']:
-                params = message.content.split(" ") 
-                mentions = message.mentions
-                if len(params) !=3:
-                    await channel.send(
-                        "Error, parameters missing or extra parameters found, the add_admin command should look like this.\n"
-                        + example_set_limit)
-                else:
-                    tier = int(params[1])
-                    token_limit = int(params[2])
-                    if tier in admins:
-                        admins["t" + str(tier)]['token_limit']=token_limit
-                        await channel.send("Token limit updated.")
-                    else:
-                        admins["t" + str(tier)]={"token_limit":token_limit,"user_list":[]}
-                        await channel.send("Tier added.")
-                json.dump(admins, open("admins.json", "w+"))
-            
-            elif message.content.lower().startswith(
-                    "$remove_admin") and unique_id in admins['t1']['user_list']:
+                    "$remove_admin") and unique_id in admin_list:
                 params = message.content.split(" ")
-                if len(params) != 3:
+                if len(params) != 2:
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the remove_admin command should look like this.\n"
                         + example_remove_admin)
                 else:
                     admin_id = int(params[1])
-                    tier = int(params[2])
-                    if admin_id in admins["t"+str(tier)]['user_list']:
-                        admins["t"+str(tier)]['user_list'].pop(admins["t"+str(tier)]['user_list'].index(admin_id))
-                        await channel.send("Admin removed.")                   
+                    if admin_id in admin_list:
+                        admin_list.pop(admin_list.index(admin_id))
+                        await channel.send("Admin removed.")
+                        admins['admins'] = admin_list
                         json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
@@ -696,8 +650,6 @@ async def on_raw_reaction_add(payload):
             drops[reaction_message_id]['user_list'].append(user.id)
             token_name=drops[reaction_message_id]['token_name']
             amount_tokens=drops[reaction_message_id]['num_tokens']
-            print(str(user.id) + " " + token_name + " " + str(get_balance(
-            user.id, token_name))+str(amount_tokens))
             set_balance(user.id, token_name, get_balance(
             user.id, token_name)+amount_tokens)
             drops[reaction_message_id]['remaining']-=1
