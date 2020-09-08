@@ -4,9 +4,11 @@ import os
 
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 
-print(ZEET_ENVIRONMENT)
 
-
+if ZEET_ENVIRONMENT == "master":
+    runBotProd()
+else:
+    runBotStaging()
 
 
 
