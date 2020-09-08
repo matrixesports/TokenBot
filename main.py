@@ -12,7 +12,7 @@ handler = http.server.SimpleHTTPRequestHandler
 with socketserver.TCPServer(("", PORT), handler) as httpd:
     print("Server started at localhost:" + str(PORT))
     httpd.serve_forever()
-
+print(ZEET_ENVIRONMENT)
 if ZEET_ENVIRONMENT == "master":
     runBotProd()
 else:
