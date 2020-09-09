@@ -18,5 +18,5 @@ if ZEET_ENVIRONMENT == "master":
 else:
     runBotStaging()
 
-upload_to_aws()
+upload_to_aws(local_file, bucket_name, s3_file_name)
 
