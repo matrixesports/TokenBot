@@ -19,4 +19,4 @@ else:
     runBotStaging()
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
-
+print(s3_file_name + " uploaded")
