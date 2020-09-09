@@ -4,7 +4,7 @@ import os
 from datetime import date
 from DBBackup import upload_to_aws
 
-
+print("Main.py running")
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 
 local_file = "/data/discord-commerce.db"
