@@ -26,7 +26,7 @@ uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
-directory = os.listdir("data")
+directory = os.listdir("/data")
 
 load_dotenv()
 example_withdraw = "$withdraw eth_address token_name token_count"
