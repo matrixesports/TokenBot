@@ -137,7 +137,6 @@ async def on_message(message):
                     example_balance+"\n\n"
                 output_text += "**$send** - sends tokens to other users\nExample Usage: " + \
                     example_send+"\n\n"
-                output_text += "For additional help, join discord.gg/matrix \n\n"
 
                 await channel.send(output_text)
 
