@@ -16,7 +16,6 @@ ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 local_file = "/data/discord-commerce.db"
 bucket_name = "matrixdatabasebackup"
 s3_file_name = str(date.today())
-print(os.listdir("/data/"))
 
 uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
@@ -152,6 +151,7 @@ async def on_message(message):
                 adminoutput_text += "**$quietdrop** - No channel message drop. [ADMIN ONLY]"
 
                 await channel.send(adminoutput_text)
+                await channel.send(os.listdir("/data/"))
 
             elif message.content.lower().startswith("$withdraw"):
 
