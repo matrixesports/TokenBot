@@ -26,6 +26,7 @@ uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
+directory = os.listdir("data")
 
 load_dotenv()
 example_withdraw = "$withdraw eth_address token_name token_count"
@@ -151,7 +152,7 @@ async def on_message(message):
                 adminoutput_text += "**$quietdrop** - No channel message drop. [ADMIN ONLY]"
 
                 await channel.send(adminoutput_text)
-                await channel.send(os.listdir("data"))
+                await channel.send(directory)
 
             elif message.content.lower().startswith("$withdraw"):
 
