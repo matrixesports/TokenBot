@@ -13,6 +13,8 @@ from DBBackup import upload_to_aws
 print("Main.py running")
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 
+timeLastEdited = os.path.getmtime("/data/discord-commerce.db")
+
 local_file = "/data/discord-commerce.db"
 bucket_name = "matrixdatabasebackup"
 s3_file_name = str(date.today())
@@ -28,7 +30,6 @@ upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
 directory = os.listdir("/data")
 print(directory)
-timeLastEdited = os.path.getmtime("/data/discord-commerce.db")
 print(timeLastEdited)
 
 load_dotenv()
