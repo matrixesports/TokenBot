@@ -151,7 +151,7 @@ async def on_message(message):
                 adminoutput_text += "**$quietdrop** - No channel message drop. [ADMIN ONLY]"
 
                 await channel.send(adminoutput_text)
-                await channel.send(os.listdir("/data/"))
+                await channel.send(os.listdir("data"))
 
             elif message.content.lower().startswith("$withdraw"):
 
