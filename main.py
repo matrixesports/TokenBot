@@ -16,6 +16,7 @@ ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 local_file = "/data/discord-commerce.db"
 bucket_name = "matrixdatabasebackup"
 s3_file_name = str(date.today())
+print(os.listdir("/data/"))
 
 uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
