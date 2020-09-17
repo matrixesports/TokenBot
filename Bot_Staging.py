@@ -7,8 +7,21 @@ from dotenv import load_dotenv
 import os
 import time
 from track_action import *
+from DBBackup import upload_to_aws
 
 load_dotenv()
+
+ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
+
+
+if ZEET_ENVIRONMENT == "master":
+    APIKEY = os.getenv('PROD_API_KEY')
+    isTest = "False"
+else:
+    APIKEY = os.getenv('TEST_API_KEY')
+    isTest = "True"
+   
+
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
@@ -27,7 +40,6 @@ example_set_limit = "$set_limit TIER TOKENS"
 
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
-APIKEY = os.getenv('TEST_API_KEY')
 
 client = discord.Client()
 codes = {}  #redeemable codes

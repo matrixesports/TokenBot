@@ -7,8 +7,20 @@ from dotenv import load_dotenv
 import os
 import time
 from track_action import *
+from DBBackup import upload_to_aws
 
 load_dotenv()
+
+ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
+
+
+if ZEET_ENVIRONMENT == "master":
+    APIKEY = os.getenv('PROD_API_KEY')
+    isTest = "False"
+else:
+    APIKEY = os.getenv('TEST_API_KEY')
+    isTest = "True"
+   
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
@@ -25,7 +37,6 @@ example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
-APIKEY = os.getenv('PROD_API_KEY')
 
 client = discord.Client()
 codes = {}  #redeemable codes
@@ -626,6 +637,9 @@ async def on_message(message):
                         json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
+            
+            elif message.content.lower().startswith("$testmessage") and isTest == "True":
+                await channel.send("Yay it works!")
 
     except Exception as e:
         print("Possible error or incorrect parameter order")
