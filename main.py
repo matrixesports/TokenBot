@@ -317,7 +317,7 @@ async def on_message(message):
                             + str(amount_tokens) + " " + str(token_name) +
                             " tokens")
                         token_list = get_token_list()
-                        track_channel = client.get_channel(751629807623602176)
+                        track_channel = client.get_channel(754155758194524181)
                         author = str(message.author)
                         if m.id not in drops:
                             drops[m.id] = {
