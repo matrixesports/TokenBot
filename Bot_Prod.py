@@ -1,36 +1,26 @@
-from Bot_Prod import runBotProd
-from Bot_Staging import runBotStaging
+import discord
+import asyncio
+import sqlite3
+from database import *
+import json
+from dotenv import load_dotenv
 import os
-<<<<<<< HEAD
 import time
 from track_action import *
-from datetime import date
 from DBBackup import upload_to_aws
 
-print("Main.py running")
+load_dotenv()
+
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 
-timeLastEdited = os.path.getmtime("/data/discord-commerce.db")
-
-local_file = "/data/discord-commerce.db"
-bucket_name = "matrixdatabasebackup"
-s3_file_name = str(date.today())
-
-uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
 if ZEET_ENVIRONMENT == "master":
     APIKEY = os.getenv('PROD_API_KEY')
+    isTest = "False"
 else:
     APIKEY = os.getenv('TEST_API_KEY')
-    
-
-upload_to_aws(local_file, bucket_name, s3_file_name)
-print(s3_file_name + " uploaded")
-directory = os.listdir("/data")
-print(directory)
-print(timeLastEdited)
-
-load_dotenv()
+    isTest = "True"
+   
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
@@ -47,7 +37,6 @@ example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
-APIKEY = os.getenv('PROD_API_KEY')
 
 client = discord.Client()
 codes = {}  #redeemable codes
@@ -135,7 +124,8 @@ async def on_message(message):
                     example_balance+"\n\n"
                 output_text += "**$send** - sends tokens to other users\nExample Usage: " + \
                     example_send+"\n\n"
-                output_text += "If you need more help please visit https://discord.gg/matrix" 
+                output_text += "For additional help, join discord.gg/matrix \n\n"
+
                 await channel.send(output_text)
 
             elif message.content.lower().startswith("$adminhelp"):
@@ -153,7 +143,6 @@ async def on_message(message):
                 adminoutput_text += "**$quietdrop** - No channel message drop. [ADMIN ONLY]"
 
                 await channel.send(adminoutput_text)
-                await channel.send(directory)
 
             elif message.content.lower().startswith("$withdraw"):
 
@@ -176,7 +165,7 @@ async def on_message(message):
                         await channel.send(
                             "You cannot withdraw less than 0 tokens.")
                     else:
-                        HQ_channel = client.get_channel(754155758194524181)
+                        HQ_channel = client.get_channel(732435051224236043)
                         current_balance -= token_count
                         set_balance(unique_id, token_name, current_balance)
                         #
@@ -315,7 +304,7 @@ async def on_message(message):
                             + str(amount_tokens) + " " + str(token_name) +
                             " tokens")
                         token_list = get_token_list()
-                        track_channel = client.get_channel(754155758194524181)
+                        track_channel = client.get_channel(751629807623602176)
                         author = str(message.author)
                         if m.id not in drops:
                             drops[m.id] = {
@@ -560,7 +549,7 @@ async def on_message(message):
                         + example_code_create)
                 else:
                     author = str(message.author)
-                    track_channel = client.get_channel(754155758194524181)
+                    track_channel = client.get_channel(751629807623602176)
                     code_creator = client.get_user(message.author.id)
                     code = params[1]
                     token_amount = int(params[2])
@@ -648,6 +637,9 @@ async def on_message(message):
                         json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
+            
+            elif message.content.lower().startswith("$testmessage") and isTest == "True":
+                await channel.send("Yay it works!")
 
     except Exception as e:
         print("Possible error or incorrect parameter order")
@@ -660,7 +652,7 @@ async def on_message(message):
 @client.event
 #Drop handling
 async def on_raw_reaction_add(payload):
-    HQ_channel = client.get_channel(754155758194524181)
+    HQ_channel = client.get_channel(732435051224236043)
     channel = client.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     reaction_message_id=message.id
@@ -720,26 +712,5 @@ async def on_raw_reaction_add(payload):
 
 
             
-if __name__ == '__main__':
+def runBotProd():   
     client.run(APIKEY)
-=======
-from datetime import date
-from DBBackup import upload_to_aws
-
-print("Main.py running")
-ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
-
-local_file = "/data/discord-commerce.db"
-bucket_name = "matrixdatabasebackup"
-s3_file_name = str(date.today())
-
-uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
-
-if ZEET_ENVIRONMENT == "master":
-    runBotProd()
-else:
-    runBotStaging()
-
-upload_to_aws(local_file, bucket_name, s3_file_name)
-print(s3_file_name + " uploaded")
->>>>>>> 832602bd5a010bcbddc6cc0b540fefa1e22b12f3

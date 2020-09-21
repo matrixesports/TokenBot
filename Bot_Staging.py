@@ -7,8 +7,21 @@ from dotenv import load_dotenv
 import os
 import time
 from track_action import *
+from DBBackup import upload_to_aws
 
 load_dotenv()
+
+ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
+
+
+if ZEET_ENVIRONMENT == "master":
+    APIKEY = os.getenv('PROD_API_KEY')
+    isTest = "False"
+else:
+    APIKEY = os.getenv('TEST_API_KEY')
+    isTest = "True"
+   
+
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
@@ -23,29 +36,29 @@ example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
 example_code_remove = "$remove_code CODE"
 example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
+example_set_limit = "$set_limit TIER TOKENS"
+
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
-APIKEY = os.getenv('API_KEY')
 
 client = discord.Client()
-codes = {}  #redeemables
-drops = {}
+codes = {}  #redeemable codes
+drops = {}  #drops are stored in memory
 
 try:
-    shop = json.loads(open("shop.json", "r").read())
+    shop = json.loads(open("/data/shop.json", "r").read())
 except:
     shop = {"message_list": []}
-    json.dump(shop, open("shop.json", "w+"))
+    json.dump(shop, open("/data/shop.json", "w+"))
 try:
-    admins = json.loads(open("admins.json", "r").read())
+    admins = json.loads(open("/data/admins.json", "r").read())
     admin_list = admins['admins']
 except:
-    admins = {"admins": []}
-    admin_list = []
-    json.dump(admins, open("admins.json", "w+"))
-codes = {}
+    admins = {"t1": {"user_list": []}}
+    json.dump(admins, open("/data/admins.json", "w+"))
 
 
+#connect
 @client.event
 async def on_ready():
     print('logged in as: ', client.user.name, ' - ', client.user.id)
@@ -64,7 +77,13 @@ def get_shop_contents(shop_name):
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
 
-
+def is_admin(unique_id):
+    for tier in admins:
+        if (tier != "admin_actions"):
+            if unique_id in admins[tier]['user_list']:
+                return True
+    return False
+#code redemption
 @client.event
 async def on_message(message):
     channel = message.channel
@@ -88,7 +107,7 @@ async def on_message(message):
                             #
                             #
                             #
-                            set_profile(unique_id, token_name, message.guild.name)
+                            set_profile(unique_id, token_name, code)
                             track_code(unique_id)
                             #
                             #
@@ -169,6 +188,7 @@ async def on_message(message):
                         #
                         await channel.send("Request being processed.")
                         admin_user = client.get_user(ADMIN_ID)
+
                         await HQ_channel.send(
                             "<@" + str(unique_id) + "> has withdrawn " +
                             str(token_count) + " " + token_name +
@@ -182,6 +202,16 @@ async def on_message(message):
                     if (int(user_balance[token_name]) != 0):
                         balance_text += ("**" + token_name + "**: " + str(
                             user_balance[token_name]) + "\n")
+                #
+                #
+                #
+                #
+                set_profile(unique_id, token_name, message.guild.name)
+                track_balance(unique_id)
+                #
+                #
+                #
+                #
                 await channel.send(balance_text)
 
             elif message.content.lower().startswith("$balance"):
@@ -202,6 +232,16 @@ async def on_message(message):
                         if (int(user_balance[token_name]) != 0):
                             balance_text += ("**" + token_name + "**: " + str(
                                 user_balance[token_name]) + "\n")
+                    #
+                    #
+                    #
+                    #
+                    set_profile(unique_id, token_name, message.guild.name)
+                    track_balance(unique_id)
+                    #
+                    #
+                    #
+                    # 
                     await channel.send(balance_text)
 
             elif message.content.lower().startswith("$send"):
@@ -215,13 +255,23 @@ async def on_message(message):
                         message.mentions[0].discriminator
                     other_id = message.mentions[0].id
                     token_count = int(params[1])
-                    token_name = params[2]
+                    token_name = params[2].lower()
                     current_balance = get_balance(unique_id, token_name)
+                    otherBalance = get_balances(other_id)
+                    otherBalanceSpecificToken = int(otherBalance[token_name])
                     if current_balance < token_count:
                         await channel.send("Not enough tokens.")
                     elif token_count < 0:
                         await channel.send(
                             "You cannot send less than zero tokens.")
+                    elif token_count > 10000:
+                        await channel.send(
+                            "You cannot send more than 10000 tokens."
+                        )
+                    elif otherBalanceSpecificToken > 25000:
+                        await channel.send(
+                            "You cannot send tokens to someone with more than 25,000 tokens! They must spend first."
+                        )     
                     else:
                         set_balance(unique_id, token_name,
                                     current_balance - token_count)
@@ -241,7 +291,7 @@ async def on_message(message):
                         await channel.send("Tokens sent succesfully.")
 
             elif message.content.lower().startswith(
-                    "$drop") and unique_id in admin_list:
+                    "$drop") and is_admin(unique_id):
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send(
@@ -258,12 +308,27 @@ async def on_message(message):
                             "You can't drop more than 1000 tokens!")
                     else:
                         user_list = []
-                        m = await channel.send(
+                        flag=True
+                        total_tokens=amount_tokens * num_drops
+                        if unique_id not in admins["t1"]['user_list']:
+                            if time.time() - 86400 > admins['admin_actions'][str(unique_id)]['24hour']:
+                                admins['admin_actions'][str(unique_id)]['24hour']= time.time()
+                                admins['admin_actions'][str(unique_id)]['tokens_used']= 0
+                            if (total_tokens>(admins['admin_actions'][str(unique_id)]['token_limit']-admins['admin_actions'][str(unique_id)]['tokens_used'])):
+                                await channel.send("Not enough tokens remaining in your tier limit.")    
+                                flag=False
+                            else:
+                                admins['admin_actions'][str(unique_id)]['tokens_used']+=total_tokens
+                        json.dump(admins, open("admins.json", "w+"))
+                        if (flag):                        
+                            m = await channel.send(
                             "The first " + str(num_drops) +
                             " people to react with the below reaction, will receive "
                             + str(amount_tokens) + " " + str(token_name) +
                             " tokens")
                         token_list = get_token_list()
+                        track_channel = client.get_channel(751629807623602176)
+                        author = str(message.author)
                         if m.id not in drops:
                             drops[m.id] = {
                                 "token_name": token_name.lower(),
@@ -271,20 +336,12 @@ async def on_message(message):
                                 "remaining": num_drops,
                                 "user_list": [client.user.id]
                             }
-                        #
-                        #
-                        #
-                        #
-                        set_profile(unique_id, token_name, message.guild.name)
-                        track_drop(unique_id)
-                        #
-                        #
-                        #
-                        #
+                        
                         await m.add_reaction(DROP_EMOJI)
-
+                        await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " every time.")
+            
             elif message.content.lower().startswith(
-                    "$quietdrop") and unique_id in admin_list:
+                    "$quietdrop") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send(
@@ -329,7 +386,7 @@ async def on_message(message):
                             print(num_drops)
 
             elif message.content.lower().startswith(
-                    "$add_item") and unique_id in admin_list:
+                    "$add_item") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
                 if len(params) != 6:
                     await channel.send(
@@ -369,7 +426,7 @@ async def on_message(message):
                                 "icon":
                                 str(reaction)
                             })
-                            json.dump(shop, open("shop.json", "w+"))
+                            json.dump(shop, open("/data/shop.json", "w+"))
                             await channel.send(
                                 "Item added, please re-run the $createshop command to refresh"
                             )
@@ -379,7 +436,7 @@ async def on_message(message):
                         )
 
             elif message.content.lower().startswith(
-                    "$remove_item") and unique_id in admin_list:
+                    "$remove_item") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
                 if len(params) != 3:
                     await channel.send(
@@ -395,13 +452,13 @@ async def on_message(message):
                             if shop[shop_name]['items'][item_num][
                                     'item_name'].lower() == item_name.lower():
                                 shop[shop_name]['items'].pop(item_num)
-                        json.dump(shop, open("shop.json", "w+"))
+                        json.dump(shop, open("/data/shop.json", "w+"))
                         await channel.send(
                             "Item removed, please re-run the $createshop command to refresh"
                         )
 
             elif message.content.lower().startswith(
-                    "$create_token") and unique_id in admin_list:
+                    "$create_token") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
                 if len(params) != 2:
                     await channel.send(
@@ -413,7 +470,7 @@ async def on_message(message):
                     await channel.send("Token created succesfully.")
 
             elif message.content.lower().startswith(
-                    "$createshop") and unique_id in admin_list:
+                    "$createshop") and unique_id in admins['t1']['user_list']:
 
                 params = message.content.split(" ")
                 if len(params) != 2:
@@ -445,10 +502,10 @@ async def on_message(message):
                             await old_msg.delete()
                         shop[shop_name]['message_id'] = new_message.id
                         shop['message_list'].append(new_message.id)
-                        json.dump(shop, open("shop.json", "w+"))
+                        json.dump(shop, open("/data/shop.json", "w+"))
 
             elif message.content.lower().startswith(
-                    "$create_vote") and unique_id in admin_list:
+                    "$create_vote") and unique_id in admins['t1']['user_list']:
                 params = message.content.split('-')
                 if len(params) != 4:
                     await channel.send(
@@ -506,13 +563,17 @@ async def on_message(message):
                         )
 
             elif message.content.lower().startswith(
-                    "$create_code") and unique_id in admin_list:
+                    "$create_code") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
+                
                 if len(params) != 5:
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the create_code command should look like this.\n"
                         + example_code_create)
                 else:
+                    author = str(message.author)
+                    track_channel = client.get_channel(751629807623602176)
+                    code_creator = client.get_user(message.author.id)
                     code = params[1]
                     token_amount = int(params[2])
                     token_name = params[3].lower()
@@ -523,10 +584,35 @@ async def on_message(message):
                         "token_name": token_name,
                         "token_count": token_amount
                     }
-                    await channel.send("Code created.")
+                    await track_channel.send(author + " has created a " + token_name + " code with " + str(max_use) + " uses. It drops " + str(token_amount) + " every time.")
 
+                    await channel.send("Code created.")
+                
+                    
+          
+            elif message.content.lower().startswith("$godsend") and unique_id in admin_list:
+                params = message.content.split(" ")
+                if len(params) != 4 or len(message.mentions) != 1:
+                    await channel.send(
+                        "Error, parameters missing or extra parameters found, the send command should look like this.\n"
+                        + example_send)
+                else:
+                    other_user = message.mentions[0].name + \
+                        message.mentions[0].discriminator
+                    other_id = message.mentions[0].id
+                    token_count = int(params[1])
+                    token_name = params[2].lower()
+                    current_balance = get_balance(unique_id, token_name)
+                    otherBalance = get_balances(other_id)
+                    otherBalanceSpecificToken = int(otherBalance[token_name])
+                    set_balance(unique_id, token_name,
+                                    current_balance - token_count)
+                    set_balance(other_id, token_name,
+                            get_balance(other_id, token_name) + token_count)
+                    await channel.send("God powers successful.")
+           
             elif message.content.lower().startswith(
-                    "$remove_code") and unique_id in admin_list:
+                    "$remove_code") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
                 if len(params) != 2:
                     await channel.send(
@@ -541,37 +627,61 @@ async def on_message(message):
                         await channel.send("Code not found.")
 
             elif message.content.lower().startswith(
-                    "$add_admin") and unique_id in admin_list:
+                    "$add_admin") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
                 mentions = message.mentions
-                if len(mentions) != 1:
+                if len(mentions) != 1 and len(params) !=3:
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the add_admin command should look like this.\n"
                         + example_add_admin)
                 else:
+                    tier = params[2]
                     admin_id = mentions[0].id
-                    if admin_id in admin_list:
-                        await channel.send("Admin already in system.")
+                    if "t" + str(tier) not in admins:
+                        await channel.send("Tier not found.")
                     else:
-                        admin_list.append(int(admin_id))
-                        admins['admins'] = admin_list
-                        await channel.send("Admin added.")
-                        json.dump(admins, open("admins.json", "w+"))
-
+                        if int(admin_id) in admins['t'+str(tier)]:
+                            await channel.send("Admin already added.")
+                        else:
+                            admins['t'+str(tier)]['user_list'].append(int(admin_id))
+                            if (tier != 1):
+                                admins['admin_actions'][str(admin_id)]={"24hour":time.time(),"tokens_used":0,"token_limit":admins["t"+str(tier)]['token_limit']}
+                                await channel.send("Admin added.")
+                        json.dump(admins, open("/data/admins.json", "w+"))
+          
             elif message.content.lower().startswith(
-                    "$remove_admin") and unique_id in admin_list:
+                    "$set_limit") and unique_id in admins['t1']['user_list']:
+                params = message.content.split(" ") 
+                mentions = message.mentions
+                if len(params) !=3:
+                    await channel.send(
+                        "Error, parameters missing or extra parameters found, the add_admin command should look like this.\n"
+                        + example_set_limit)
+                else:
+                    tier = int(params[1])
+                    token_limit = int(params[2])
+                    if tier in admins:
+                        admins["t" + str(tier)]['token_limit']=token_limit
+                        await channel.send("Token limit updated.")
+                    else:
+                        admins["t" + str(tier)]={"token_limit":token_limit,"user_list":[]}
+                        await channel.send("Tier added.")
+                json.dump(admins, open("admins.json", "w+"))
+            
+            elif message.content.lower().startswith(
+                    "$remove_admin") and unique_id in admins['t1']['user_list']:
                 params = message.content.split(" ")
-                if len(params) != 2:
+                if len(params) != 3:
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the remove_admin command should look like this.\n"
                         + example_remove_admin)
                 else:
                     admin_id = int(params[1])
-                    if admin_id in admin_list:
-                        admin_list.pop(admin_list.index(admin_id))
-                        await channel.send("Admin removed.")
-                        admins['admins'] = admin_list
-                        json.dump(admins, open("admins.json", "w+"))
+                    tier = int(params[2])
+                    if admin_id in admins["t"+str(tier)]['user_list']:
+                        admins["t"+str(tier)]['user_list'].pop(admins["t"+str(tier)]['user_list'].index(admin_id))
+                        await channel.send("Admin removed.")                   
+                        json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
 
@@ -584,21 +694,34 @@ async def on_message(message):
 
 
 @client.event
+#Drop handling
 async def on_raw_reaction_add(payload):
     HQ_channel = client.get_channel(732435051224236043)
-    channel=client.get_channel(payload.channel_id)
+    channel = client.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     reaction_message_id=message.id
     if (reaction_message_id in drops):
         user = await client.fetch_user(payload.user_id)
+        unique_id = user.id
         emoji = str(payload.emoji)
         if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
             drops[reaction_message_id]['user_list'].append(user.id)
             token_name=drops[reaction_message_id]['token_name']
             amount_tokens=drops[reaction_message_id]['num_tokens']
+            print(str(user.id) + " " + token_name + " " + str(get_balance(
+            user.id, token_name))+str(amount_tokens))
             set_balance(user.id, token_name, get_balance(
             user.id, token_name)+amount_tokens)
             drops[reaction_message_id]['remaining']-=1
+            #
+            #
+            #
+            set_profile(unique_id, token_name, message.guild.name)
+            track_drop(unique_id)
+            #
+            #
+            #
+            #
             await user.send("You have obtained " + str(amount_tokens) + " tokens!")
             if drops[reaction_message_id]['remaining']==0:
                 del(drops[reaction_message_id])
@@ -608,6 +731,7 @@ async def on_raw_reaction_add(payload):
         unique_id = user.id
         emoji = str(payload.emoji)
         shop_name=None
+        track_buy(unique_id)
         for s in shop:
             if s != "message_list" and shop[s]['message_id'] == reaction_message_id:
                 shop_name=s
@@ -622,7 +746,7 @@ async def on_raw_reaction_add(payload):
                         item['stock']-=1
                         if (item['stock']==0):
                             shop[shop_name]['items'].pop(shop[shop_name]['items'].index(item))
-                        json.dump(shop,open("shop.json","w+"))
+                        json.dump(shop,open("/data/shop.json","w+"))
                         await user.send("<@"+str(user.id) + ">, purchase is being processed. Your purchase has been sent to the admins.")
                         set_balance(
                             unique_id, item['token_name'], user_balance-int(item['cost']))
@@ -633,6 +757,5 @@ async def on_raw_reaction_add(payload):
                     break
 
 
-
-if __name__ == '__main__':
+def runBotStaging():   
     client.run(APIKEY)
