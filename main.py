@@ -21,10 +21,11 @@ s3_file_name = str(date.today())
 
 uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
-#if ZEET_ENVIRONMENT == "master":
-    #runBotProd()
-#else:
-    #runBotStaging()
+if ZEET_ENVIRONMENT == "master":
+    APIKEY = os.getenv('NzMxNzIzNTY0OTIyODMwODg4.XwqMrA.ByEmSueo6XZqOoZq8IxQr1rcFI0')
+else:
+    APIKEY = os.getenv('NzQ2ODI1OTA3NjQ1NDQ4MjYy.X0F90w.MVnzH4mNW2vNywDCrw2CLNOyn0g')
+    
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
