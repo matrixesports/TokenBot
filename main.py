@@ -23,9 +23,10 @@ uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
 if ZEET_ENVIRONMENT == "master":
     APIKEY = os.getenv('PROD_API_KEY')
+    print("Prod key retrieved.")
 else:
     APIKEY = os.getenv('TEST_API_KEY')
-    
+    print("Test key retrieved")
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
