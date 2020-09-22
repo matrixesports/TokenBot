@@ -19,9 +19,6 @@ s3_file_name = str(date.today())
 
 uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
-os.remove("/data/discord-commerce.db")
-os.remove("/data/admins.json")
-os.remove("/data/shop.json")
 
 if ZEET_ENVIRONMENT == "master":
     APIKEY = os.getenv('PROD_API_KEY')
