@@ -12,21 +12,22 @@ from DBBackup import upload_to_aws
 
 print("Main.py running")
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
-
 timeLastEdited = os.path.getmtime("/data/discord-commerce.db")
-
 local_file = "/data/discord-commerce.db"
 bucket_name = "matrixdatabasebackup"
 s3_file_name = str(date.today())
 
 uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
+os.remove("/data/discord-commerce.db")
+os.remove("/data/admins.json")
+os.remove("/data/shop.json")
+
 if ZEET_ENVIRONMENT == "master":
     APIKEY = os.getenv('PROD_API_KEY')
-    print("Prod key retrieved.")
 else:
     APIKEY = os.getenv('TEST_API_KEY')
-    print("Test key retrieved")
+    
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
@@ -51,6 +52,7 @@ example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
+APIKEY = os.getenv('PROD_API_KEY')
 
 client = discord.Client()
 codes = {}  #redeemable codes
