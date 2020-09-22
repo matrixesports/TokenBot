@@ -6,8 +6,6 @@ from track_action import *
 from datetime import date
 from DBBackup import upload_to_aws
 
-load_dotenv()
-
 
 print("Main.py running")
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
