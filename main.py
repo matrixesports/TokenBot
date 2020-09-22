@@ -10,7 +10,6 @@ from track_action import *
 from datetime import date
 from DBBackup import upload_to_aws
 
-
 print("Main.py running")
 ZEET_ENVIRONMENT = os.getenv('ZEET_ENVIRONMENT')
 
@@ -34,7 +33,7 @@ directory = os.listdir("/data")
 print(directory)
 print(timeLastEdited)
 
-
+load_dotenv()
 example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
