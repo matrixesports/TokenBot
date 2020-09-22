@@ -178,7 +178,7 @@ async def on_message(message):
                         await channel.send(
                             "You cannot withdraw less than 0 tokens.")
                     else:
-                        HQ_channel = client.get_channel(754155758194524181)
+                        #HQ_channel = client.get_channel(754155758194524181)
                         current_balance -= token_count
                         set_balance(unique_id, token_name, current_balance)
                         #
@@ -192,10 +192,10 @@ async def on_message(message):
                         #
                         #
                         await channel.send("Request being processed.")
-                        await HQ_channel.send(
-                            "<@" + str(unique_id) + "> has withdrawn " +
-                            str(token_count) + " " + token_name +
-                            " tokens to " + str(eth_address))
+                       # await HQ_channel.send(
+                            #"<@" + str(unique_id) + "> has withdrawn " +
+                            #str(token_count) + " " + token_name +
+                           # " tokens to " + str(eth_address))
 
             elif message.content.lower() == "$balance":
                 user_balance = get_balances(unique_id)
@@ -662,7 +662,7 @@ async def on_message(message):
 @client.event
 #Drop handling
 async def on_raw_reaction_add(payload):
-    HQ_channel = client.get_channel(754155758194524181)
+    #HQ_channel = client.get_channel(754155758194524181)
     channel = client.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     reaction_message_id=message.id
@@ -717,7 +717,7 @@ async def on_raw_reaction_add(payload):
                         admin_user = client.get_user(ADMIN_ID)
                         shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
                         await shop_message.edit(content=get_shop_contents(shop_name))
-                        await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
+                        #await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
                     break
 
 
