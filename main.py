@@ -216,6 +216,7 @@ async def on_message(message):
                 #
                 #
                 #
+                await channel.send("sending balance")
                 await channel.send(balance_text)
 
             elif message.content.lower().startswith("$balance"):
