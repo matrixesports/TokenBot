@@ -88,6 +88,10 @@ def get_shop_contents(shop_name):
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
 
+async def on_message(message):
+    channel = message.channel
+    await channel.send("Message receieved.")
+
 #code redemption
 @client.event
 async def on_message(message):
@@ -295,6 +299,7 @@ async def on_message(message):
 
             elif message.content.lower().startswith(
                     "$drop") and unique_id in admin_list:
+                await channel.send("Drop command receieved")
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send(
