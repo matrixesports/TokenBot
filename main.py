@@ -329,7 +329,7 @@ async def on_message(message):
                             }
                         
                         await m.add_reaction(DROP_EMOJI)
-                        await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " every time.")
+                        #await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " every time.")
             
             elif message.content.lower().startswith(
                     "$quietdrop") and unique_id in admin_list:
