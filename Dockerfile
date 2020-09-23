@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . ./
 
-CMD python main.py
+ CMD cp -n ./*.db ./*.json /data || true && python main.py
