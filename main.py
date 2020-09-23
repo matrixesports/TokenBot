@@ -618,7 +618,7 @@ async def on_message(message):
                         await channel.send("Code not found.")
 
             elif message.content.lower().startswith(
-                    "$add_admin") and unique_id in admin_list:
+                    "$add_admin"):
                 params = message.content.split(" ")
                 mentions = message.mentions
                 if len(mentions) != 1:
