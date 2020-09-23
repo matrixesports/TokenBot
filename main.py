@@ -26,8 +26,8 @@ if ZEET_ENVIRONMENT == "master":
 else:
     APIKEY = os.getenv('TEST_API_KEY')
     
-os.remove("admins.json")
-os.remove("discord-commerce.db")
+os.remove("/data/admins.json")
+os.remove("/data/discord-commerce.db")
 
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
