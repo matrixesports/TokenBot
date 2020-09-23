@@ -298,7 +298,7 @@ async def on_message(message):
                         await channel.send("Tokens sent succesfully.")
 
             elif message.content.lower().startswith(
-                    "$drop") and unique_id in admin_list:
+                    "$drop"):
                 await channel.send("Drop command receieved")
                 params = message.content.split(" ")
                 if len(params) != 4:
