@@ -87,11 +87,7 @@ def get_shop_contents(shop_name):
             ", **Stock**: " + str(
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
-
-async def on_message(message):
-    channel = message.channel
-    await channel.send("Message receieved.")
-
+    
 #code redemption
 @client.event
 async def on_message(message):
