@@ -25,16 +25,16 @@ if ZEET_ENVIRONMENT == "master":
     APIKEY = os.getenv('PROD_API_KEY')
 else:
     APIKEY = os.getenv('TEST_API_KEY')
-    
+
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
 print(s3_file_name + " uploaded")
 directory = os.listdir("/data")
 print(directory)
-print(timeLastEdited)
+#print(timeLastEdited)
 
 load_dotenv()
-example_withdraw = "$withdraw eth_address token_name token_count"
+#example_withdraw = "$withdraw eth_address token_name token_count"
 example_balance_self = "$balance"
 example_balance = "$balance @user"
 example_send = "$send AMOUNT_OF_TOKENS TOKEN_NAME @USER"
@@ -87,7 +87,7 @@ def get_shop_contents(shop_name):
             ", **Stock**: " + str(
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
-
+    
 #code redemption
 @client.event
 async def on_message(message):
@@ -129,8 +129,8 @@ async def on_message(message):
         if unique_id != client.user.id:
             if message.content.lower().startswith("$help"):
                 output_text = "**Help Menu**\n\n"
-                output_text += "**$withdraw** - withdraw tokens to ETH address\nExample Usage: " + \
-                    example_withdraw+"\n\n"
+                #output_text += "**$withdraw** - withdraw tokens to ETH address\nExample Usage: " + \
+                    #example_withdraw+"\n\n"
                 output_text += "**$balance** - list balances for yourself\nExample Usage: " + \
                     example_balance_self+"\n\n"
                 output_text += "**$balance** @User - list balances for other users\nExample Usage: " + \
@@ -157,45 +157,7 @@ async def on_message(message):
                 await channel.send(adminoutput_text)
                 await channel.send(directory)
 
-            elif message.content.lower().startswith("$withdraw"):
-
-                params = message.content.split(" ")
-                if len(params) != 4:
-                    await channel.send(
-                        "Error, parameters missing or extra parameters found, the withdraw command should look like this.\n"
-                        + example_withdraw)
-                else:
-                    eth_address = params[1]
-                    token_name = params[2]
-                    token_count = int(params[3])
-                    current_balance = get_balance(unique_id, token_name)
-                    if current_balance is None:
-                        await channel.send("Token not found.")
-                    elif current_balance < token_count:
-                        await channel.send(
-                            "Not enough tokens to make the withdrawal.")
-                    elif token_count < 0:
-                        await channel.send(
-                            "You cannot withdraw less than 0 tokens.")
-                    else:
-                        HQ_channel = client.get_channel(754155758194524181)
-                        current_balance -= token_count
-                        set_balance(unique_id, token_name, current_balance)
-                        #
-                        #
-                        #
-                        #
-                        set_profile(unique_id, token_name, message.guild.name)
-                        track_withdraw(unique_id)
-                        #
-                        #
-                        #
-                        #
-                        await channel.send("Request being processed.")
-                        await HQ_channel.send(
-                            "<@" + str(unique_id) + "> has withdrawn " +
-                            str(token_count) + " " + token_name +
-                            " tokens to " + str(eth_address))
+           
 
             elif message.content.lower() == "$balance":
                 user_balance = get_balances(unique_id)
@@ -294,7 +256,8 @@ async def on_message(message):
                         await channel.send("Tokens sent succesfully.")
 
             elif message.content.lower().startswith(
-                    "$drop") and unique_id in admin_list:
+                    "$drop"):
+                await channel.send("Drop command receieved")
                 params = message.content.split(" ")
                 if len(params) != 4:
                     await channel.send(
@@ -328,7 +291,7 @@ async def on_message(message):
                             }
                         
                         await m.add_reaction(DROP_EMOJI)
-                        await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " every time.")
+                        #await track_channel.send(author + " has created a " + token_name + " drop with " + str(num_drops) + " uses. It drops " + str(amount_tokens) + " every time.")
             
             elif message.content.lower().startswith(
                     "$quietdrop") and unique_id in admin_list:
@@ -617,7 +580,7 @@ async def on_message(message):
                         await channel.send("Code not found.")
 
             elif message.content.lower().startswith(
-                    "$add_admin") and unique_id in admin_list:
+                    "$add_admin"):
                 params = message.content.split(" ")
                 mentions = message.mentions
                 if len(mentions) != 1:
@@ -662,7 +625,7 @@ async def on_message(message):
 @client.event
 #Drop handling
 async def on_raw_reaction_add(payload):
-    HQ_channel = client.get_channel(754155758194524181)
+    #HQ_channel = client.get_channel(754155758194524181)
     channel = client.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
     reaction_message_id=message.id
@@ -717,7 +680,7 @@ async def on_raw_reaction_add(payload):
                         admin_user = client.get_user(ADMIN_ID)
                         shop_message=await channel.fetch_message(shop[shop_name]['message_id'])
                         await shop_message.edit(content=get_shop_contents(shop_name))
-                        await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
+                        #await HQ_channel.send("<@"+str(user.id) + "> has purchased " + item['item_name'] + " from " + shop_name)
                     break
 
 
