@@ -337,7 +337,7 @@ async def on_message(message):
                             await user.send("You have obtained " +
                                             str(amount_tokens) + " tokens!")
                             print(num_drops)
-
+            #add items
             elif message.content.lower().startswith(
                     "$add_item") and unique_id in admin_list:
                 params = message.content.split(" ")
