@@ -648,8 +648,8 @@ async def on_message(message):
                 await channel.send("Watchdog activated")
                 i = random_drops["channel"].index(channel)
                 random_drops["message_count"][i] = random_drops["message_count"][i] + 1
-                await channel.send(random_drops["message_count"][i])
-                await channel.send(random_drops["numofdrops"][i])
+                """await channel.send(random_drops["message_count"][i])
+                await channel.send(random_drops["numofdrops"][i])"""
                 if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
                     m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
                     #TODO give tokens as reactions to this message
@@ -665,6 +665,7 @@ async def on_message(message):
 
             elif message.content.lower().startswith("$random_strop_test"):
               await channel.send(channel)
+              await channel.send(random_drops)
 
             #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
             elif message.content.lower().startswith("$delete_random_drop") and unique_id in admin_list:
