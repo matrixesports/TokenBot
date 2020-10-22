@@ -30,7 +30,6 @@ else:
 upload_to_aws(local_file, bucket_name, s3_file_name)
 upload_to_aws("/data/admins.json", bucket_name, "admins")
 upload_to_aws("/data/randomDrops.json", bucket_name, "drops")
-
 print(s3_file_name + " uploaded")
 directory = os.listdir("/data")
 print(directory)
@@ -77,17 +76,6 @@ try:
 except:
     random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
     json.dump(random_drops, open("/data/randomDrops.json", "w+"))
-
-""""
-#values for random_drop locations, always edit these lists together as they should be the same length
-random_drop_channel = []
-random_drop_message_amount = []
-random_drop_token_amount = []
-random_drop_token_name = []
-random_drop_numofdrops = []
-random_drop_active = []
-random_drop_drop_count = []
-"""
 
 #connect
 @client.event
@@ -670,11 +658,10 @@ async def on_message(message):
                             "user_list": [client.user.id]
                         }
                     random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+                json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+
             elif message.content.lower().startswith("$random_drop_test"):
               await channel.send(random_drops)
-                
-                #json.dump(random_drops, open("/data/randomDrops.json", "w+"))
-
 
             #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
             elif message.content.lower().startswith("$delete_random_drop") and unique_id in admin_list:
@@ -683,7 +670,7 @@ async def on_message(message):
                     await channel.send(
                         "Error, parameters missing or extra parameters found, the randomdrop command should look like this.\n"
                         + example_delete_random_drop)
-                elif param[0] not in random_drops["channel"]:
+                elif param[1] not in random_drops["channel"]:
                     await channel.send("There are no random drops enabled in the specified channel at this time")
                 else:
                     i = random_drops["channel"].index(param[1])
@@ -693,7 +680,7 @@ async def on_message(message):
                     del random_drops["token_name"][i]
                     del random_drops["numofdrops"][i]
                     await channel.send("Ramdon drops disabled in " + param[1])
-                    #json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+                    json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
                 
 
