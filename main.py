@@ -664,7 +664,7 @@ async def on_message(message):
                 json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
             elif message.content.lower().startswith("$random_strop_test"):
-              await channel.send(random_drops, channel)
+              await channel.send(channel)
 
             #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
             elif message.content.lower().startswith("$delete_random_drop") and unique_id in admin_list:
