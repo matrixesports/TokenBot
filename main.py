@@ -667,6 +667,8 @@ async def on_message(message):
                             "user_list": [client.user.id]
                         }
                     random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+                    json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+
 
             #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
             elif message.content.lower().startswith("$delete_random_drop") and unique_id in admin_list:
@@ -685,6 +687,9 @@ async def on_message(message):
                     del random_drops["token_name"][i]
                     del random_drops["numofdrops"][i]
                     await channel.send("Ramdon drops disabled in " + param[1])
+                    json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+
+                
 
                 #TODO track uses
 
