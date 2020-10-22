@@ -28,6 +28,9 @@ else:
 
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
+upload_to_aws(admins.json, bucket_name, s3_file_name)
+upload_to_aws(randomDrops.json, bucket_name, s3_file_name)
+
 print(s3_file_name + " uploaded")
 directory = os.listdir("/data")
 print(directory)
