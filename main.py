@@ -670,6 +670,9 @@ async def on_message(message):
                             "user_list": [client.user.id]
                         }
                     random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+            elif message.content.lower().startswith("$random_drop_test"):
+              await channel.send(random_drops)
+                
                 #json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
 
