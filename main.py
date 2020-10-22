@@ -48,6 +48,8 @@ example_code_create = "$create_code CODE TOKEN_AMOUNT TOKEN_NAME CODE_LIMIT"
 example_code_remove = "$remove_code CODE"
 example_add_admin = "$add_admin USER_ID"
 example_remove_admin = "$remove_admin USER_ID"
+example_random_drop = "$random_drop MESSAGE_AMOUNT TOKEN_AMOUNT TOKEN_NAME NUMBER_OF_DROPS CHANNEL_LOCATION"
+example_delete_random_drop = "$delete_random_drop CHANNEL_LOCATION"
 DROP_EMOJI = "💰"
 ADMIN_ID = 124016824202297344
 
@@ -67,7 +69,22 @@ except:
     admins = {"admins": []}
     admin_list = []
     json.dump(admins, open("/data/admins.json", "w+"))
+try:
+    random_drops = json.loads(open("/data.shop.json", "r"))
+except:
+    random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
+    json.dump(random_drops, open("/data/admins.json", "w+"))
 
+""""
+#values for random_drop locations, always edit these lists together as they should be the same length
+random_drop_channel = []
+random_drop_message_amount = []
+random_drop_token_amount = []
+random_drop_token_name = []
+random_drop_numofdrops = []
+random_drop_active = []
+random_drop_drop_count = []
+"""
 
 #connect
 @client.event
@@ -337,7 +354,7 @@ async def on_message(message):
                             await user.send("You have obtained " +
                                             str(amount_tokens) + " tokens!")
                             print(num_drops)
-            #add items
+
             elif message.content.lower().startswith(
                     "$add_item") and unique_id in admin_list:
                 params = message.content.split(" ")
@@ -597,6 +614,7 @@ async def on_message(message):
                         await channel.send("Admin added.")
                         json.dump(admins, open("/data/admins.json", "w+"))
 
+
             elif message.content.lower().startswith(
                     "$remove_admin") and unique_id in admin_list:
                 params = message.content.split(" ")
@@ -613,6 +631,65 @@ async def on_message(message):
                         json.dump(admins, open("/data/admins.json", "w+"))
                     else:
                         await channel.send("Admin not found in system.")
+            
+            #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
+            elif message.content.lower().startwswith("$random_drop") and unique_id in admin_list:
+                param = message.content.split(" ")
+                if len(param) != 6:
+                    await channel.send(
+                        "Error, parameters missing or extra parameters found, the randomdrop command should look like this.\n"
+                        + example_random_drop)
+                        #example_random_drop = "$random_drop MESSAGE_AMOUNT TOKEN_AMOUNT TOKEN_NAME NUMBER_OF_DROPS CHANNEL_LOCATION"
+                elif param[5] in random_drops["channel"]: 
+                    await channel.send("Error, only one random drop may be enabled in a channel at a time try again later or use $delete_random_drop first")
+                else:
+                  random_drops["channel"].append(param[5])
+                  random_drops["message_amount"].append(param[1])
+                  random_drops["token_amount"].append(param[2])
+                  random_drops["token_name"].append(param[3])
+                  random_drops["numofdrops"].append(param[4])
+                  random_drops["message_count"].append(0)
+                  json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+                    
+                  await channel.send("random drop enabled in " + param[5])
+
+            elif channel in random_drops["channel"]: #random_drop watchdog
+                i = random_drops["channel"].index(channel)
+                random_drops["message_count"][i] = random_drops["message_count"][i] + 1
+                if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
+                    m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
+                    #TODO give tokens as reactions to this message
+                    if m.id not in drops:
+                        drops[m.id] = {
+                            "token_name": random_drops["token_name"][i],
+                            "num_tokens": random_drops["token_amount"][i],
+                            "remaining": random_drops["numofdrops"][i],
+                            "user_list": [client.user.id]
+                        }
+                    random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+
+            #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
+            elif message.content.lower().startswith("$delete_random_drop") and unique_id in admin_list:
+                param = message.content.split(" ")
+                if len(param) != 2:
+                    await channel.send(
+                        "Error, parameters missing or extra parameters found, the randomdrop command should look like this.\n"
+                        + example_delete_random_drop)
+                elif param[0] not in random_drops["channel"]:
+                    await channel.send("There are no random drops enabled in the specified channel at this time")
+                else:
+                    i = random_drops["channel"].index(param[1])
+                    del random_drops["channel"][i]
+                    del random_drops["message_amount"][i]
+                    del random_drops["token_amount"][i]
+                    del random_drops["token_name"][i]
+                    del random_drops["numofdrops"][i]
+                    await channel.send("Ramdon drops disabled in " + param[1])
+
+                #TODO track uses
+
+
+
 
     except Exception as e:
         print("Possible error or incorrect parameter order")
