@@ -70,10 +70,10 @@ except:
     admin_list = []
     json.dump(admins, open("/data/admins.json", "w+"))
 try:
-    random_drops = json.loads(open("/data.shop.json", "r"))
+    random_drops = json.loads(open("/data/randomDrops.json", "r"))
 except:
     random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
-    json.dump(random_drops, open("/data/admins.json", "w+"))
+    json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
 """"
 #values for random_drop locations, always edit these lists together as they should be the same length
