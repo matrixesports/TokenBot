@@ -667,7 +667,7 @@ async def on_message(message):
                             "user_list": [client.user.id]
                         }
                     random_drops["message_count"][i] = 0 #reset drops, but the drops continue
-                    json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+                json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
 
             #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
