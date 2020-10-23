@@ -645,12 +645,13 @@ async def on_message(message):
                   await channel.send("random drop enabled in " + param[5])
 
             
-            elif ("#" + str(channel)) in random_drops["channel"]: #random_drop watchdog
-              await channel.send("Watchdog activated")
-              i = random_drops["channel"].index("#" + str(channel))
-              random_drops["message_count"][i] = random_drops["message_count"][i] + 1
-              """await channel.send(random_drops["message_count"][i])
-              await channel.send(random_drops["numofdrops"][i])"""
+            elif message.content.lower().startswith("$woof"): 
+                if ("#" + str(channel)) in random_drops["channel"]: #random_drop watchdog
+                    await channel.send("Watchdog activated")
+                    i = random_drops["channel"].index("#" + str(channel))
+                    random_drops["message_count"][i] = random_drops["message_count"][i] + 1
+                    """await channel.send(random_drops["message_count"][i])
+                    await channel.send(random_drops["numofdrops"][i])"""
               if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
                   m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
                   #TODO give tokens as reactions to this message
