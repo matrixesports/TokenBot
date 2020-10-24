@@ -150,6 +150,7 @@ async def on_message(message):
                                 "remaining": random_drops["numofdrops"][i],
                                 "user_list": [client.user.id]
                             }
+                await m.add_reaction(DROP_EMOJI)
                     
             json.dump(random_drops, open("/data/randomDrops.json", "w+"))    
 
