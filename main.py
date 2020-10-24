@@ -21,10 +21,10 @@ s3_file_name = str(date.today())
 
 uploaded = upload_to_aws('local_file', 'bucket_name', 's3_file_name')
 
-#if ZEET_ENVIRONMENT == "master":
-    #APIKEY = os.getenv('PROD_API_KEY')
-#else:
-APIKEY = os.getenv('TEST_API_KEY')
+if ZEET_ENVIRONMENT == "master":
+    APIKEY = os.getenv('PROD_API_KEY')
+else:
+    APIKEY = os.getenv('TEST_API_KEY')
 
 
 upload_to_aws(local_file, bucket_name, s3_file_name)
@@ -95,7 +95,6 @@ def get_shop_contents(shop_name):
             ", **Stock**: " + str(
                 item['stock']) + ", **Icon**: " + item['icon'] + "\n")
     return message_content
-
     
 #code redemption
 @client.event
@@ -134,27 +133,6 @@ async def on_message(message):
                     else:
                         await channel.send(
                             "You have already redeemed this code.")
-            print("Message received.")
-    
-        await channel.send("Channel = " + channel)
-        if channel in random_drops["channel"]:   
-            await channel.send("Watchdog activated")
-            i = random_drops["channel"].index("#" + channel)
-            random_drops["message_count"][i] = random_drops["message_count"][i] + 1
-            """await channel.send(random_drops["message_count"][i])
-            await channel.send(random_drops["numofdrops"][i])"""
-            if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
-                m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
-                #TODO give tokens as reactions to this message
-                if m.id not in drops:
-                    drops[m.id] = {
-                                "token_name": random_drops["token_name"][i],
-                                "num_tokens": random_drops["token_amount"][i],
-                                "remaining": random_drops["numofdrops"][i],
-                                "user_list": [client.user.id]
-                            }
-                    random_drops["message_count"][i] = 0 #reset drops, but the drops continue
-        json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
         if unique_id != client.user.id:
             if message.content.lower().startswith("$help"):
@@ -169,6 +147,7 @@ async def on_message(message):
                     example_send+"\n\n"
                 output_text += "If you need more help please visit https://discord.gg/matrix" 
                 await channel.send(output_text)
+                await channel.send(channel)
 
             elif message.content.lower().startswith("$adminhelp"):
                 adminoutput_text = "**Admin Help Menu**\n\n"
@@ -666,7 +645,25 @@ async def on_message(message):
                     
                   await channel.send("random drop enabled in " + param[5])
 
-        
+            
+            elif channel in random_drops["channel"]: #random_drop watchdog
+              await channel.send("Watchdog activated")
+              i = random_drops["channel"].index(str(channel))
+              random_drops["message_count"][i] = random_drops["message_count"][i] + 1
+              """await channel.send(random_drops["message_count"][i])
+              await channel.send(random_drops["numofdrops"][i])"""
+              if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
+                  m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
+                  #TODO give tokens as reactions to this message
+                  if m.id not in drops:
+                      drops[m.id] = {
+                          "token_name": random_drops["token_name"][i],
+                          "num_tokens": random_drops["token_amount"][i],
+                          "remaining": random_drops["numofdrops"][i],
+                          "user_list": [client.user.id]
+                      }
+                  random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+              json.dump(random_drops, open("/data/randomDrops.json", "w+"))
 
             elif message.content.lower().startswith("$random_strop_test"):
               await channel.send(channel)
@@ -768,7 +765,6 @@ async def on_raw_reaction_add(payload):
                     break
 
 
-
             
 if __name__ == '__main__':
-    client.run(APIKEY)
+    client.run(APIKEY)  
