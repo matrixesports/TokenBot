@@ -99,6 +99,7 @@ def get_shop_contents(shop_name):
 @client.event
 async def on_message(message):
     channel = message.channel
+    await channel.send("Channel = " + channel)
     if channel in random_drops["channel"]:   
         await channel.send("Watchdog activated")
         i = random_drops["channel"].index("#" + str(channel))
