@@ -135,7 +135,6 @@ async def on_message(message):
                             "You have already redeemed this code.")
 
         if str(channel) in random_drops["channel"]: #random_drop watchdog
-            await channel.send("Watchdog activated")
             i = random_drops["channel"].index(str(channel))
             random_drops["message_count"][i] = random_drops["message_count"][i] + 1
             """await channel.send(random_drops["message_count"][i])
