@@ -147,7 +147,7 @@ async def on_message(message):
                     drops[m.id] = {
                                 "token_name": random_drops["token_name"][i],
                                 "num_tokens": random_drops["token_amount"][i],
-                                "remaining":  random_drops["numofdrops"][i],
+                                "remaining": int(random_drops["numofdrops"][i]),
                                 "user_list": [client.user.id]
                             }
                 await m.add_reaction(DROP_EMOJI)
@@ -656,10 +656,10 @@ async def on_message(message):
                     await channel.send("Error, only one random drop may be enabled in a channel at a time try again later or use $delete_random_drop first")
                 else:
                   random_drops["channel"].append(param[5])
-                  random_drops["message_amount"].append(int(param[1]))
-                  random_drops["token_amount"].append(int(param[2]))
+                  random_drops["message_amount"].append(param[1])
+                  random_drops["token_amount"].append(param[2])
                   random_drops["token_name"].append(param[3])
-                  random_drops["numofdrops"].append(int(param[4]))
+                  random_drops["numofdrops"].append(param[4])
                   random_drops["message_count"].append(0)
                   json.dump(random_drops, open("/data/randomDrops.json", "w+"))
                     
