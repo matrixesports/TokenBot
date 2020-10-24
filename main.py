@@ -152,7 +152,7 @@ async def on_message(message):
                             }
                 await m.add_reaction(DROP_EMOJI)
                     
-            json.dump(random_drops, open("/data/randomDrops.json", "w+"))    
+            #json.dump(random_drops, open("/data/randomDrops.json", "w+"))    
 
     
         if unique_id != client.user.id:
@@ -721,7 +721,7 @@ async def on_raw_reaction_add(payload):
             token_name=drops[reaction_message_id]['token_name']
             amount_tokens=drops[reaction_message_id]['num_tokens']
             set_balance(user.id, token_name, get_balance(
-            user.id, token_name)+int(amount_tokens))
+            user.id, token_name)+int(amount_tokens) )
             drops[reaction_message_id]['remaining']-=1
             #
             #
