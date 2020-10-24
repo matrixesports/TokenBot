@@ -147,7 +147,7 @@ async def on_message(message):
                     drops[m.id] = {
                                 "token_name": random_drops["token_name"][i],
                                 "num_tokens": random_drops["token_amount"][i],
-                                "remaining": random_drops["numofdrops"][i],
+                                "remaining": int(random_drops["numofdrops"][i]),
                                 "user_list": [client.user.id]
                             }
                 await m.add_reaction(DROP_EMOJI)
