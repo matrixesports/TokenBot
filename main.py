@@ -139,7 +139,7 @@ async def on_message(message):
         await channel.send("Channel = " + channel)
         if channel in random_drops["channel"]:   
             await channel.send("Watchdog activated")
-            i = random_drops["channel"].index("#" + stringChannel)
+            i = random_drops["channel"].index("#" + channel)
             random_drops["message_count"][i] = random_drops["message_count"][i] + 1
             """await channel.send(random_drops["message_count"][i])
             await channel.send(random_drops["numofdrops"][i])"""
