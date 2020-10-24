@@ -101,7 +101,6 @@ def get_shop_contents(shop_name):
 @client.event
 async def on_message(message):
     channel = message.channel
-    stringChannel = str(message.channel)
     author = str(message.author)
     unique_id = message.author.id
     try:
@@ -138,7 +137,7 @@ async def on_message(message):
             print("Message received.")
     
         await channel.send("Channel = " + channel)
-        if stringChannel in random_drops["channel"]:   
+        if channel in random_drops["channel"]:   
             await channel.send("Watchdog activated")
             i = random_drops["channel"].index("#" + stringChannel)
             random_drops["message_count"][i] = random_drops["message_count"][i] + 1
