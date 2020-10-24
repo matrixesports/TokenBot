@@ -72,7 +72,7 @@ except:
     admin_list = []
     json.dump(admins, open("/data/admins.json", "w+"))
 try:
-    random_drops = json.loads(open("/data/randomDrops.json", "r"))
+    random_drops = json.loads(open("/data/randomDrops.json", "r").read())
 except:
     random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
     json.dump(random_drops, open("/data/randomDrops.json", "w+"))
