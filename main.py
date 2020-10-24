@@ -140,6 +140,7 @@ async def on_message(message):
             """await channel.send(random_drops["message_count"][i])
             await channel.send(random_drops["numofdrops"][i])"""
             if int(random_drops["message_count"][i]) >= int(random_drops["message_amount"][i]):
+                random_drops["message_count"][i] = 0 #reset drops, but the drops continue
                 m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
                 #TODO give tokens as reactions to this message
                 if m.id not in drops:
@@ -149,7 +150,7 @@ async def on_message(message):
                                 "remaining": random_drops["numofdrops"][i],
                                 "user_list": [client.user.id]
                             }
-                    random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+                    
             json.dump(random_drops, open("/data/randomDrops.json", "w+"))    
 
     
