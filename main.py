@@ -645,7 +645,7 @@ async def on_message(message):
                   await channel.send("random drop enabled in " + param[5])
 
             elif message.content.lower().startswith("$woof"):
-                await channel.send(channel)
+                await channel.send(str(channel))
                 await channel.send(random_drops["channel"])
                 if channel in random_drops["channel"]: #random_drop watchdog
                     await channel.send("Watchdog activated")
