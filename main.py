@@ -647,7 +647,7 @@ async def on_message(message):
             elif message.content.lower().startswith("$woof"):
                 await channel.send(str(channel))
                 await channel.send(random_drops["channel"])
-                if channel in random_drops["channel"]: #random_drop watchdog
+                if str(channel) in random_drops["channel"]: #random_drop watchdog
                     await channel.send("Watchdog activated")
                     i = random_drops["channel"].index(str(channel))
                     random_drops["message_count"][i] = random_drops["message_count"][i] + 1
