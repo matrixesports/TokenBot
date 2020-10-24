@@ -644,7 +644,7 @@ async def on_message(message):
                     else:
                         await channel.send("Admin not found in system.")
             
-            #random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
+            ##random_drops = {"channel": [], "message_amount": [], "token_amount": [], "token_name": [], "numofdrops": [], "message_count": []} 
             elif message.content.lower().startswith("$random_drop") and unique_id in admin_list:
                 param = message.content.split(" ")
                 if len(param) != 6:
