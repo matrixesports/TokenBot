@@ -137,24 +137,24 @@ async def on_message(message):
             print("Message received.")
     
         await channel.send("Channel = " + channel)
-        if channel in random_drops["channel"]:   
-            await channel.send("Watchdog activated")
-            i = random_drops["channel"].index("#" + str(channel))
-            random_drops["message_count"][i] = random_drops["message_count"][i] + 1
-            """await channel.send(random_drops["message_count"][i])
-            await channel.send(random_drops["numofdrops"][i])"""
-            if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
-                m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
-                #TODO give tokens as reactions to this message
-                if m.id not in drops:
-                    drops[m.id] = {
-                                "token_name": random_drops["token_name"][i],
-                                "num_tokens": random_drops["token_amount"][i],
-                                "remaining": random_drops["numofdrops"][i],
-                                "user_list": [client.user.id]
-                            }
-                    random_drops["message_count"][i] = 0 #reset drops, but the drops continue
-        json.dump(random_drops, open("/data/randomDrops.json", "w+"))
+    if channel in random_drops["channel"]:   
+        await channel.send("Watchdog activated")
+        i = random_drops["channel"].index("#" + str(channel))
+        random_drops["message_count"][i] = random_drops["message_count"][i] + 1
+        """await channel.send(random_drops["message_count"][i])
+        await channel.send(random_drops["numofdrops"][i])"""
+        if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
+            m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
+            #TODO give tokens as reactions to this message
+            if m.id not in drops:
+                drops[m.id] = {
+                            "token_name": random_drops["token_name"][i],
+                            "num_tokens": random_drops["token_amount"][i],
+                            "remaining": random_drops["numofdrops"][i],
+                            "user_list": [client.user.id]
+                        }
+                random_drops["message_count"][i] = 0 #reset drops, but the drops continue
+    json.dump(random_drops, open("/data/randomDrops.json", "w+"))
         if unique_id != client.user.id:
             if message.content.lower().startswith("$help"):
                 output_text = "**Help Menu**\n\n"
