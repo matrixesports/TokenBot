@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . ./
 
-CMD python main.py
+CMD CMD cp -n ./randomDrops.json /data || true && python main.py
