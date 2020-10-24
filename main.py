@@ -716,7 +716,7 @@ async def on_raw_reaction_add(payload):
         user = await client.fetch_user(payload.user_id)
         unique_id = user.id
         emoji = str(payload.emoji)
-        if drops[reaction_message_id]['remaining']>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
+        if str(drops[reaction_message_id]['remaining'])>0 and user.id not in drops[reaction_message_id]['user_list'] and emoji==DROP_EMOJI:
             drops[reaction_message_id]['user_list'].append(user.id)
             token_name=drops[reaction_message_id]['token_name']
             amount_tokens=drops[reaction_message_id]['num_tokens']
