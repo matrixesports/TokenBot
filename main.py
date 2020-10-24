@@ -653,7 +653,7 @@ async def on_message(message):
                     random_drops["message_count"][i] = random_drops["message_count"][i] + 1
                     """await channel.send(random_drops["message_count"][i])
                     await channel.send(random_drops["numofdrops"][i])"""
-                    if random_drops["message_count"][i] >= random_drops["message_amount"][i]:
+                    if int(random_drops["message_count"][i]) >= int(random_drops["message_amount"][i]):
                         m = await channel.send("Random Drop: The first " + random_drops["numofdrops"][i] + " people that click the reaction below will get " + random_drops["token_amount"][i] + " tokens")
                         #TODO give tokens as reactions to this message
                         if m.id not in drops:
